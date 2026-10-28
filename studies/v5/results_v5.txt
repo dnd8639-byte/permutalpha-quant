@@ -1,0 +1,19 @@
+================================================================================
+v5 RESULTS  T9 index-roll front-running (CL HO RB NG), 188 months 2011-02..2026-09, N = 13
+================================================================================
+Sharpe (net)  -1.061   95% CI [-1.91, -0.48]   NW t -4.03   DSR 0.00  (SR0 0.680)
+Sharpe gross  +0.175    2x cost -2.243
+PLACEBO BD12-20 (net) -0.204   -> mechanism predicts roll window > placebo
+2010-2017 -1.35   2018+ -0.92
+ann ret -0.0537  vol 0.0506  maxDD -0.608  skew +1.58  hit rate 25%
+
+Per market: net | gross | placebo  ; mean monthly P&L (units of 10%-vol risk) BD1-4 vs BD5-9
+  CL  -0.285 | +0.560 | +0.249   BD1-4 -19.1 bp   BD5-9 +76.5 bp   (n=188)
+  HO  -1.112 | -0.082 | -0.723   BD1-4 -7.5 bp   BD5-9 +3.2 bp   (n=188)
+  RB  -0.475 | +0.206 | -1.471   BD1-4 -0.5 bp   BD5-9 +13.2 bp   (n=188)
+  NG  -0.744 | -0.410 | -0.779   BD1-4 +9.5 bp   BD5-9 -35.2 bp   (n=188)
+
+================================================================================
+GATES  G1 FAIL   G2 FAIL   G3 FAIL
+VERDICT (preregistered): NO EDGE
+================================================================================

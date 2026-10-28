@@ -1,0 +1,24 @@
+{
+ "genome": {
+  "rule": "ma_cross",
+  "params": {
+   "fast": 3,
+   "slow": 100
+  },
+  "gate": "mid+high",
+  "side": "both"
+ },
+ "markets": [
+  "BTC",
+  "EURUSD",
+  "GBPUSD",
+  "USDJPY",
+  "GOLD",
+  "CRUDE",
+  "SP500"
+ ],
+ "dev_score": 0.9534485435515533,
+ "dev_p": 0.58,
+ "n_trials": 111,
+ "holdout_opened": null
+}

@@ -1,0 +1,25 @@
+# Publishes the lab to PyPI as "permutalpha" when a GitHub release is published. No password or token is stored
+# anywhere: PyPI trusts this workflow (trusted publishing), set up once on pypi.org.
+name: publish
+on:
+  release:
+    types: [published]
+jobs:
+  pypi:
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    defaults:
+      run:
+        working-directory: lab
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install build && python -m build
+      - run: pip install dist/*.whl && cd /tmp && oql demo && python -c "import oql; print(oql.__version__)"
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: lab/dist/

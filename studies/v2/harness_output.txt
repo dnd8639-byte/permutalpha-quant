@@ -1,0 +1,8 @@
+H1  planted trend, causal          mean SR +2.893  (SE 0.028)  need > 0.5                  PASS
+H2  random walk, causal            mean SR -0.023  (SE 0.024)  need |mean| < 2 SE          PASS
+H3a canary: v1 code on random walk mean SR +0.303  (SE 0.026)  need > 3 SE (leak detected) PASS
+H3b canary: signal uses r_t        mean SR +4.839  (SE 0.032)  need > 1.0                  PASS
+H4a bootstrap CI coverage          94.0% of 200    need 90%-98%            PASS
+H4b DSR worked example             SR0 0.1132 DSR 0.9004   need 0.1132 / 0.90        PASS
+
+HARNESS: ALL PASS

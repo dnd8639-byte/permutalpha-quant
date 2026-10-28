@@ -1,0 +1,17 @@
+# systemd unit for the Raspberry Pi: starts the paper trader at boot and restarts it if it stops.
+# Install:  sudo cp paper-trader.service /etc/systemd/system/ && sudo systemctl enable --now paper-trader
+# Logs:     journalctl -u paper-trader -f
+[Unit]
+Description=Paper trader (no real money)
+After=network-online.target time-sync.target
+Wants=network-online.target
+
+[Service]
+User=david
+WorkingDirectory=/home/david/prod
+ExecStart=/home/david/prod/.venv/bin/python run.py
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

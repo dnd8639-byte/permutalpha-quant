@@ -1,0 +1,9 @@
+Donchian breakout on ES  |  4235 daily bars 2010-06-07..2026-09-22  |  cost 2 bps/unit
+Grid: 39 lookbacks (10..200)
+
+STEP 1  In-sample excellence (2010-2018): best lookback 125, PF 1.110, Sharpe 0.54
+STEP 2  In-sample MCPT (1000 perms): p = 0.562   (noise's best PF: median 1.117, 95th pct 1.204)
+STEP 3  Walk-forward (4y train, re-optimize quarterly), out-of-sample 2014-04-10..: PF 0.908, Sharpe -0.50
+STEP 4  Walk-forward MCPT (200 perms): p = 0.985
+
+Ledger now holds 2 tests. Every one counts against you when judging the next p-value.

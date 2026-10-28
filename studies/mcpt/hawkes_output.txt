@@ -1,0 +1,8 @@
+VolatilityHawkes | BTCUSDT 1h 2018-01-01 01:00:00 .. 2022-12-31 23:00:00 (43823 bars) | cost 5.0 bps | grid 25
+STEP 1  In-sample 2018-2020: best (0.1, 96) PF 1.133 Sharpe 2.26   (zero cost: best (0.1, 96) PF 1.139)
+STEP 2  In-sample MCPT (1000): p = 0.002   noise best-PF median 1.033, 95th 1.075
+STEP 3  Walk-forward OOS 2020-12-31..2022-12-31: PF 1.051 Sharpe 1.06
+        params chosen: 2020-12-31:(0.1, 96), 2021-03-31:(0.25, 168), 2021-06-29:(0.1, 96), 2021-09-27:(0.1, 96), 2021-12-26:(0.1, 96), 2022-03-26:(0.1, 96), 2022-06-24:(0.1, 96), 2022-09-22:(0.1, 96), 2022-12-21:(0.1, 96)
+STEP 4  Walk-forward MCPT (200): p = 0.025
+
+Ledger: 4 tests logged.

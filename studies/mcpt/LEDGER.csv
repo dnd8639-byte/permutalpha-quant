@@ -1,0 +1,13 @@
+time,test,strategy,grid_size,market,start,end,bars,metric,real,p_value,n_perm,cost_bps,best_param,note
+2026-09-23 22:52,in_sample_mcpt,donchian,39,ES,2010-06-07,2018-12-31,2227,pf,1.1104,0.562,1000,2,125,example
+2026-09-23 23:00,walk_forward_mcpt,donchian,39,ES,2010-06-07,2026-09-22,4235,pf,0.9083,0.985,200,2,,train=1000 step=63 example
+2026-09-24 14:09,in_sample_mcpt,hawkes_vol,25,BTCUSDT_1h,2018-01-01,2020-12-31,26303,pf,1.1325,0.002,1000,5.0,"(0.1, 96)",neurotrader hawkes
+2026-09-24 14:20,walk_forward_mcpt,hawkes_vol,25,BTCUSDT_1h,2018-01-01,2022-12-31,43823,pf,1.0511,0.025,200,5.0,,train=26280 step=2160 neurotrader hawkes
+2026-09-24 17:03,postpub_fixed_mcpt,hawkes_vol,25,BTCUSDT_1h_binanceus,2023-01-01,2026-09-24,32691,pf,1.0314,0.026,1000,5.0,"(0.1, 96)","post-publication, params fixed from author's 2018-2022 data"
+2026-09-24 17:12,in_sample_signflip,hawkes_vol,25,BTCUSDT_1h,2018-01-01,2020-12-31,26303,pf,1.1325,0.002,1000,5.0,"(0.1, 96)",sign-flip null (vol clustering kept)
+2026-09-24 17:22,trendline_A1_insample_2018_2019,trendline_base,1,BTCUSDT_1h,2018-01-01,2019-12-31,17519,pf,0.9365,0.627,1000,5.0,lb72 fixed,fixed author params
+2026-09-24 17:25,trendline_A2_oos_2020_2022,trendline_base,1,BTCUSDT_1h,2020-01-01,2022-12-31,26304,pf,1.0123,0.119,1000,5.0,lb72 fixed,fixed author params
+2026-09-24 17:29,trendline_A3_postpub_2023_now,trendline_base,1,BTCUSDT_1h,2023-01-01,2026-09-24,32691,pf,1.0115,0.077,1000,5.0,lb72 fixed,fixed author params
+2026-09-24 17:42,trendline_B1B2_2020_2022_wfmcpt,trendline_meta,1,BTCUSDT_1h,2020-01-01,2022-12-31,26304,pf,1.0907,0.015,200,5.0,author,full pipeline permuted
+2026-09-24 17:53,trendline_B1B2_2020_2022_labelshuffle,trendline_meta,1,BTCUSDT_1h,2020-01-01,2022-12-31,26304,pf,1.0907,0.005,200,5.0,author,label-shuffle null
+2026-09-24 18:13,trendline_B3_postpub_2023_now_labelshuffle,trendline_meta,1,BTCUSDT_1h,2023-01-01,2026-09-24,32691,pf,1.0277,0.195,200,5.0,author,label-shuffle null

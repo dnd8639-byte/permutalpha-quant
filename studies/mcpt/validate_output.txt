@@ -1,0 +1,5 @@
+V1 IS-MCPT on noise:    share p<0.05 = 10% (expect ~5%, allow <=5/40)   mean p = 0.51   PASS
+V2 IS-MCPT on planted trend: share p<0.05 = 100% (need >=80%)   PASS
+V3 WF-MCPT: noise share p<0.05 = 10% (mean p 0.61);  trend share p<0.05 = 100%   PASS
+
+FRAMEWORK: VALIDATED

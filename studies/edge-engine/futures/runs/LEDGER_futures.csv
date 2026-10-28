@@ -1,0 +1,2 @@
+date,test,finalist,dev_sharpe,trials,search_p,dsr,holdout
+2026-10-13 10:37,futures 2-D gate search,"{""er_gate"": ""all"", ""params"": {""lookback"": 250}, ""rule"": ""momentum"", ""side"": ""both"", ""sizing"": ""trailing"", ""vol_gate"": ""all""}",0.596,185,0.22,0.174,sealed

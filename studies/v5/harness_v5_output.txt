@@ -1,0 +1,5 @@
+H13 planted roll pressure (15 bps/day)       mean SR +4.026 (SE 0.073)  need > 1.0        PASS
+H14 no roll pressure                         mean SR +0.063 (SE 0.049)  need |mean|<2SE   PASS
+H15 canary: direction from realized outcome  mean SR +8.894 (SE 0.140)  need > 1.0        PASS
+
+HARNESS v5: ALL PASS

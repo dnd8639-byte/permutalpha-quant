@@ -1,0 +1,16 @@
+# Install:  sudo cp book-recorder.service /etc/systemd/system/ && sudo systemctl daemon-reload && sudo systemctl enable --now book-recorder
+# Logs:     journalctl -u book-recorder -f
+[Unit]
+Description=Order-book recorder (read-only public market data)
+After=network-online.target time-sync.target
+Wants=network-online.target
+
+[Service]
+User=david
+WorkingDirectory=/home/david/recorder
+ExecStart=/home/david/prod/.venv/bin/python recorder.py
+Restart=always
+RestartSec=20
+
+[Install]
+WantedBy=multi-user.target

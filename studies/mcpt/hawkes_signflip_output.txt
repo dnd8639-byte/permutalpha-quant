@@ -1,0 +1,1 @@
+SIGN-FLIP (volatility kept, direction random), 1000: p = 0.002   null best-PF median 1.038, 95th 1.082   real 1.133

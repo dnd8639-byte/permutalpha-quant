@@ -1,0 +1,79 @@
+====================================================================================
+v3 RESULTS  clean futures: 35 markets, 2010-06 -> 2026-09
+====================================================================================
+DSR trials N = 11
+strategy     months range                 SR            CI95   NW t   DSR  2018+ 2x cost  G1 G2 G3
+--------------------------------------------------------------------------------------------------
+T0_mom14        172 2012-06..2026-09 +0.014 [-0.60,+0.57]   0.05  0.20  +0.01  -0.171  F  F  P  (data-fix measure; not in verdict)
+T4_tsmom12      172 2012-06..2026-09 +0.218 [-0.28,+0.67]   0.78  0.47  +0.23  +0.018  F  F  P
+T5_xsmom        172 2012-06..2026-09 +0.308 [-0.19,+0.80]   1.06  0.60  +0.26  +0.114  F  F  P
+T6_carry        172 2012-06..2026-09 +0.103 [-0.28,+0.47]   0.51  0.30  +0.11  -0.193  F  F  P
+T7_blend        148 2014-06..2026-09 +0.340 [-0.28,+0.90]   1.01  0.64  +0.28  +0.093  F  F  P
+SR0 (expected max of 11 null trials, annualized): 0.240
+
+Subperiods: Sharpe 2010-2017 | 2018+   ann ret / vol / maxDD / skew
+  T0_mom14     +0.02 | +0.01    +0.001 / 0.103 / -0.367 / +0.41
+  T4_tsmom12   +0.19 | +0.23    +0.025 / 0.114 / -0.307 / +0.38
+  T5_xsmom     +0.40 | +0.26    +0.034 / 0.111 / -0.222 / +0.17
+  T6_carry     +0.09 | +0.11    +0.012 / 0.119 / -0.265 / +0.28
+  T7_blend     +0.47 | +0.28    +0.028 / 0.082 / -0.218 / +0.39
+
+Correlations between strategies
+            T0_mom14  T4_tsmom12  T5_xsmom  T6_carry  T7_blend
+T0_mom14        1.00        0.64      0.50      0.03      0.54
+T4_tsmom12      0.64        1.00      0.82      0.04      0.83
+T5_xsmom        0.50        0.82      1.00      0.15      0.87
+T6_carry        0.03        0.04      0.15      1.00      0.53
+T7_blend        0.54        0.83      0.87      0.53      1.00
+
+DATA FIX: Yahoo =F vs clean, monthly, overlapping months
+mkt     class   corr  yahoo_minus_clean_ann   n
+ BZ    energy +0.966                 -0.047 196
+ RB    energy +0.904                 -0.046 196
+ 6M        fx +0.995                 -0.044 196
+ HO    energy +0.948                 -0.044 196
+ ZM    grains +0.926                 -0.026 196
+ ZS    grains +0.946                 -0.018 196
+ ZB     rates +0.950                 -0.015 196
+ 6A        fx +0.990                 -0.012 196
+ ZN     rates +0.974                 -0.011 196
+ UB     rates +0.986                 -0.008 196
+ ZF     rates +0.950                 -0.007 196
+NKD    equity +0.994                 -0.004 196
+ YM    equity +0.993                 -0.004 196
+ ZT     rates +0.911                 -0.001 196
+ ZO    grains +0.897                 -0.000 196
+ 6C        fx +0.993                 +0.000 196
+ ES    equity +0.990                 +0.001 196
+ 6B        fx +0.997                 +0.003 196
+ 6E        fx +0.992                 +0.010 196
+ PA    metals +0.990                 +0.011 196
+ ZL    grains +0.976                 +0.012 196
+ NQ    equity +0.991                 +0.012 196
+RTY    equity +0.995                 +0.016 110
+ HG    metals +0.985                 +0.016 196
+ PL    metals +0.994                 +0.018 196
+ 6J        fx +0.989                 +0.018 196
+ 6S        fx +0.987                 +0.021 196
+ SI    metals +0.984                 +0.022 196
+ GC    metals +0.986                 +0.024 196
+ ZC    grains +0.894                 +0.027 196
+ CL    energy +0.977                 +0.028 196
+ LE livestock +0.749                 +0.034 196
+ HE livestock +0.743                 +0.095 196
+ ZW    grains +0.976                 +0.100 196
+ NG    energy +0.904                 +0.239 196
+  median |annual contamination|: 1.61%   worst: NG 23.9%/yr
+  T0 mom(1,4), same markets & months:  Yahoo SR +0.082   clean SR +0.014
+
+Context
+  corr with AQR TSMOM: T0_mom14=+0.51  T4_tsmom12=+0.82  T5_xsmom=+0.71  T6_carry=+0.06  T7_blend=+0.71
+  T4 on U6 macro 1973+: SR +0.572  (pre-2016 +0.71, 2016+ -0.02)
+
+====================================================================================
+  T4_tsmom12   no edge
+  T5_xsmom     no edge
+  T6_carry     no edge
+  T7_blend     no edge
+VERDICT (preregistered): NO EDGE FOUND
+====================================================================================

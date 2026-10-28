@@ -1,0 +1,54 @@
+==============================================================================
+v2 RESULTS  (causal code = primary; costs per PREREGISTRATION_v2 s.4)
+DSR trials N = 6: crypto=-0.065, etf20=+0.411, etf39=+0.213, futures=+0.127, U5_industries=+0.275, U6_macro=+0.334
+==============================================================================
+universe             n months range                 SR            CI95   NW t   DSR  v1 SR  G1 G2
+-------------------------------------------------------------------------------------------------
+crypto               4     60 2021-10..2026-09  -0.065 [-0.68,+0.60]  -0.17  0.26 +0.024  F  F  (not gated)
+etf20               20    224 2008-02..2026-09  +0.411 [+0.05,+0.77]   2.07  0.80 +0.634  P  F  (not gated)
+etf39               39    224 2008-02..2026-09  +0.213 [-0.14,+0.58]   1.13  0.49 +0.464  F  F  (not gated)
+futures             39    296 2002-02..2026-09  +0.127 [-0.29,+0.53]   0.60  0.32 +0.339  F  F  (not gated)
+U5_industries       49   1177 1928-07..2026-07  +0.275 [+0.05,+0.50]   2.53  0.70 +0.516  P  F
+U6_macro             9    645 1973-01..2026-09  +0.334 [+0.06,+0.60]   2.35  0.80 +0.523  P  F
+U6avg_DIAGNOSTIC    17    943 1948-02..2026-08  +0.901 [+0.63,+1.16]   5.78  1.00 +1.093  P  P  (not gated)
+
+SR0 (expected max Sharpe of 6 null trials, annualized): 0.219
+
+Detail: ann return / ann vol / max DD / skew
+  crypto             -0.007 / 0.100 / -0.191 / -0.69
+  etf20              +0.047 / 0.113 / -0.275 / +0.28
+  etf39              +0.024 / 0.112 / -0.294 / +0.37
+  futures            +0.014 / 0.107 / -0.361 / +0.34
+  U5_industries      +0.031 / 0.111 / -0.626 / -0.45
+  U6_macro           +0.039 / 0.116 / -0.442 / +0.27
+  U6avg_DIAGNOSTIC   +0.084 / 0.093 / -0.310 / +0.95
+
+Cost sweep (flat bps, causal): Sharpe at 0 / 25 / 50 bps
+  crypto             -0.052 / -0.085 / -0.118
+  etf20              +0.543 / +0.213 / -0.117
+  etf39              +0.393 / -0.057 / -0.501
+  futures            +0.317 / -0.158 / -0.627
+  U5_industries      +0.413 / +0.193 / -0.028
+  U6_macro           +0.401 / +0.010 / -0.381
+  U6avg_DIAGNOSTIC   +1.017 / +0.723 / +0.420
+
+Subperiods (causal, net): Sharpe [months]
+                              pre-1990         1990-2008         2009-2015    2016+ post-pub
+  crypto                             -                 -                 -   -0.07 [  60]  
+  etf20                              -                 -   +0.50 [  84]     +0.37 [ 129]  
+  etf39                              -                 -   +0.31 [  84]     +0.19 [ 129]  
+  futures                            -   +0.44 [  83]     +0.09 [  84]     -0.09 [ 129]  
+  U5_industries        +0.35 [ 738]     +0.09 [ 228]     +0.71 [  84]     -0.14 [ 127]  
+  U6_macro             +0.67 [ 204]     +0.29 [ 228]     +0.46 [  84]     -0.35 [ 129]  
+  U6avg_DIAGNOSTIC     +0.82 [ 503]     +1.35 [ 228]     +1.10 [  84]     +0.29 [ 128]  
+
+AQR TSMOM benchmark (diagnostic; expect corr > 0.3 for U6)
+  U6_macro           TSMOM=+0.42  TSMOM^CM=+0.17  TSMOM^EQ=+0.21  TSMOM^FI=+0.25  TSMOM^FX=+0.41   (n=497)
+  U5_industries      TSMOM=+0.29  TSMOM^CM=+0.10  TSMOM^EQ=+0.36  TSMOM^FI=+0.17  TSMOM^FX=+0.16   (n=497)
+  futures            TSMOM=+0.46  TSMOM^CM=+0.44  TSMOM^EQ=+0.18  TSMOM^FI=+0.17  TSMOM^FX=+0.35   (n=292)
+  etf20              TSMOM=+0.43  TSMOM^CM=+0.22  TSMOM^EQ=+0.23  TSMOM^FI=+0.34  TSMOM^FX=+0.32   (n=220)
+
+==============================================================================
+GATES  U5_industries: G1 PASS, G2 FAIL   |   U6_macro: G1 PASS, G2 FAIL
+VERDICT (preregistered rule): NO DEMONSTRABLE EDGE
+==============================================================================

@@ -1,0 +1,5 @@
+Parameters chosen on author's 2018-2022 data: (0.1, 96) (in-sample PF 1.098)
+Source check, 2022 hourly returns: correlation 0.9958 over 8759 bars
+POST-PUBLICATION 2023-01-01..2026-09-24: PF 1.031  Sharpe 0.67  time in market 50%
+PF by year: 2023: 1.090  2024: 1.017  2025: 0.991  2026: 1.044
+Permutation test (fixed params, 2023+ shuffled, 1000): p = 0.026

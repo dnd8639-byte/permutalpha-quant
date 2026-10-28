@@ -1,0 +1,5 @@
+H10 cointegrated pair (OU, HL 10d)           mean SR +1.227 (SE 0.033)  need > 1.0          PASS
+H11 independent random walks                 mean SR +0.016 (SE 0.048)  need |mean|<2SE     PASS
+H12 canary: hindsight hedge ratio + OU fit   mean SR +0.519 (SE 0.035)  need > H11 + 3SE    PASS
+
+HARNESS v4: ALL PASS

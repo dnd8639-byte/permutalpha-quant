@@ -1,0 +1,7 @@
+H7a T4 slow TSMOM on random walk         mean SR +0.040 (SE 0.040)  need |mean|<2SE       PASS
+H7b T5 XS momentum on random walk        mean SR -0.014 (SE 0.039)  need |mean|<2SE       PASS
+H8  T5 canary: signal uses month t       mean SR +3.927 (SE 0.033)  need > 1.0            PASS
+H9a T6 carry, planted premium            mean SR +6.642 (SE 0.052)  need > 0.5            PASS
+H9b T6 carry, zero-premium control       mean SR -0.062 (SE 0.034)  need |mean|<2SE       PASS
+
+HARNESS v3: ALL PASS

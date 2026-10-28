@@ -1,0 +1,2 @@
+end-of-month prices      mean SR +0.031 (SE 0.028)
+monthly-average prices   mean SR +1.072 (SE 0.031)

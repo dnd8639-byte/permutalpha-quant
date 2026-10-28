@@ -1,0 +1,4 @@
+rolls detected: 122  (expected ~119)
+max |clean - truth| daily: 4.44e-16
+annual return bias  naive splice: +29.30%   clean: +0.00%
+H6: PASS

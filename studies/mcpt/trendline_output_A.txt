@@ -1,0 +1,4 @@
+A. BASE BREAKOUT (all trades, fixed params, 5 bps)
+  A1_insample_2018_2019: PF 0.936 (0-cost 0.972)  p = 0.627  [noise median 0.950, 95th 1.015]
+  A2_oos_2020_2022: PF 1.012 (0-cost 1.054)  p = 0.119  [noise median 0.974, 95th 1.026]
+  A3_postpub_2023_now: PF 1.012 (0-cost 1.079)  p = 0.077  [noise median 0.970, 95th 1.016]

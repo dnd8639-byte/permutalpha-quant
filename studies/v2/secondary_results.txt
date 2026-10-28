@@ -1,0 +1,26 @@
+SECONDARY ANALYSES (Addendum B). Verdict locked: NO DEMONSTRABLE EDGE.  n_perm=1000
+==============================================================================
+
+S1  Permutation test (does ordering matter?)
+  U5_industries  real SR +0.275 | null mean +0.036 sd 0.097 95th +0.197 | p = 0.0090  -> ordering matters
+  U6_macro       real SR +0.334 | null mean +0.002 sd 0.135 95th +0.225 | p = 0.0060  -> ordering matters
+
+S2  Factor regressions (Newey-West 12)
+  U5 ~ FF3:   alpha +3.472%/yr (t +2.76)  Mkt -0.036 (t -0.78)  SMB +0.072 (t +1.83)  HML -0.063 (t -1.38)  R2 0.011  n=1177
+  U6 ~ Mkt+Bond: alpha +4.583%/yr (t +2.59)  Mkt -0.075 (t -1.46)  Bond -0.082 (t -0.89)  R2 0.016  n=643
+
+S3  Crisis alpha: worst 10% of US equity months
+  U5_industries  crisis months n=118 (equity avg -9.26%): strategy +0.52%/mo vs other +0.23%/mo  diff t +0.54  | corr w/ equity in crises -0.14
+      pre-2016  crisis months n=106: strategy +0.58%/mo
+      2016+     crisis months n= 12: strategy -0.03%/mo
+  U6_macro       crisis months n= 65 (equity avg -8.20%): strategy +0.97%/mo vs other +0.25%/mo  diff t +1.22  | corr w/ equity in crises -0.06
+      pre-2016  crisis months n= 51: strategy +0.93%/mo
+      2016+     crisis months n= 14: strategy +1.12%/mo
+
+S4  Post-2016 break: r = a + b*1[t>=2016]
+  U5_industries  pre mean +3.61%/yr  change b -5.16%/yr  NW t -1.49  -> decline not distinguishable from noise
+  U6_macro       pre mean +5.75%/yr  change b -9.39%/yr  NW t -2.68  -> decay statistically real
+
+S5  Power / detectability
+  U5_industries  SR 0.275: years needed for t=2:    53   t=3:   119   | sample has 98 yrs | P(G2 pass | true SR = observed) = 14%
+  U6_macro       SR 0.334: years needed for t=2:    36   t=3:    81   | sample has 54 yrs | P(G2 pass | true SR = observed) = 21%

@@ -1,0 +1,10 @@
+{
+  "_comment": "Each market: hourly CSV (UTC), cost per unit traded in basis points (spread + slippage), fill delay in hours.",
+  "BTC":    {"file": "../mcpt-lab/data/btc_hourly_full.csv", "cost_bps": 5.0, "delay_h": 1},
+  "EURUSD": {"file": "data/EURUSD_1h.csv", "cost_bps": 1.0, "delay_h": 1},
+  "GBPUSD": {"file": "data/GBPUSD_1h.csv", "cost_bps": 1.5, "delay_h": 1},
+  "USDJPY": {"file": "data/USDJPY_1h.csv", "cost_bps": 1.0, "delay_h": 1},
+  "GOLD":   {"file": "data/GOLD_1h.csv", "cost_bps": 2.0, "delay_h": 1},
+  "CRUDE":  {"file": "data/CRUDE_1h.csv", "cost_bps": 3.0, "delay_h": 1},
+  "SP500":  {"file": "data/SP500_1h.csv", "cost_bps": 1.0, "delay_h": 1}
+}

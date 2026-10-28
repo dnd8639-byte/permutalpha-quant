@@ -1,0 +1,22 @@
+================================================================================
+v4 RESULTS  T8 OU mean reversion, 165 months 2013-01..2026-09, DSR N = 12
+================================================================================
+Sharpe (net)     -0.386   95% CI [-0.67, -0.08]   NW t -2.34   DSR 0.00  (SR0 0.369)
+Sharpe gross     -0.073     2x cost -0.677
+2010-2017 -0.54   2018+ -0.28
+ann ret -0.009  vol 0.024  maxDD -0.150  skew -1.52
+
+Per spread (monthly, net | gross):  in-market share, trades, median half-life (days)
+  S1_crush        -0.024 | +0.234   in-mkt 8%  trades   18  HL 24.4
+  S2_crack        -0.127 | -0.036   in-mkt 11%  trades   30  HL 16.6
+  S3_curve        -0.364 | -0.027   in-mkt 12%  trades   18  HL 20.4
+  S4_wti_brent    -0.353 | -0.146   in-mkt 9%  trades   18  HL 24.9
+  S5_gold_silver  -0.261 | -0.191   in-mkt 10%  trades   16  HL 26.7
+
+Correlation of T8 with v3 strategies (monthly)
+  T0_mom14=-0.09  T4_tsmom12=-0.09  T5_xsmom=-0.05  T6_carry=-0.25  T7_blend=-0.19
+
+================================================================================
+GATES  G1 FAIL   G2 FAIL   G3 FAIL
+VERDICT (preregistered): NO EDGE
+================================================================================
