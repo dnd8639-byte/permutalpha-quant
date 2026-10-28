@@ -74,7 +74,14 @@ def prepare(book: dict, cost_bps: dict, warmup: int = 250, score_from=None, scor
         ret = np.diff(lc, prepend=lc[0])
         intra = np.log(df["close"] / df["open"]).to_numpy(float)
         sd = pd.Series(ret).rolling(sd_window).std().to_numpy()
-        size = band_sizes(np.clip(per_bar / sd, 0, MAX_LEVERAGE), band)
+        # no trustworthy volatility estimate -> no position. A flat or stale stretch (half the window's moves exactly
+        # zero: a pegged currency, a frozen feed) has a tiny measured volatility, and dividing by it used to put the
+        # market at the 10x leverage cap.
+        stale = pd.Series(ret == 0).rolling(sd_window).mean().to_numpy() >= 0.5
+        ok = np.isfinite(sd) & (sd > 0) & ~stale
+        with np.errstate(divide="ignore", invalid="ignore"):
+            size = np.where(ok, np.clip(per_bar / sd, 0, MAX_LEVERAGE), np.where(np.isfinite(sd), 0.0, np.nan))
+        size = band_sizes(size, band)
         win = np.zeros(len(df), bool)
         win[warmup:] = True
         if score_from is not None:

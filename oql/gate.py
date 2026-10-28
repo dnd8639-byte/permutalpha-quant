@@ -120,7 +120,10 @@ def run_holdout(exp, finalist: dict, split: str, procs=None, n_perm=199) -> dict
                 null = x
     p = ps[nulls[0]]
     passed = bool(real > 0 and max(ps.values()) < exp.alpha)
+    first = min(df.index[0] for df in book.values())
+    years = float(port.notna().sum() / sc.prep.ppy)
+    dev_years = float((split - first).days / 365.25)
     return dict(kind="holdout", verdict="PASS" if passed else "FAIL", holdout_sharpe=real, p=p, n_perm=n_perm,
                 start=str(split), end=str(port.index[-1]) if len(port) else "", bars=int(port.notna().sum()),
                 side_beta=side_and_beta(sc, finalist, exp.delay), null_median=float(np.median(null)),
-                null_model=nulls[0], p_by_null=ps)
+                null_model=nulls[0], p_by_null=ps, null=sorted(map(float, null)), years=years, dev_years=dev_years)

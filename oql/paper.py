@@ -82,7 +82,7 @@ class ReplayFeed:
 
 def _closed(df: pd.DataFrame, timeframe: str, now=None) -> pd.DataFrame:
     """Only bars that have finished: a bar labelled by its open time t is closed once t + timeframe <= now."""
-    now = pd.Timestamp(now) if now is not None else pd.Timestamp.utcnow()
+    now = pd.Timestamp(now) if now is not None else pd.Timestamp.now("UTC")
     if now.tzinfo is None:
         now = now.tz_localize("UTC")
     return df[df.index + pd.Timedelta(TF[timeframe]) <= now]

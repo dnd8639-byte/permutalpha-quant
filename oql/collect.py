@@ -102,7 +102,7 @@ def _cached(url: str, path: str, getter, checksum: bool = False) -> bytes | None
 # ---------------------------------------------------------------------------------------------- Binance
 def _binance_files(market, kind, symbol, interval, start, getter, today=None):
     """All monthly files from `start`, plus daily files for months whose monthly file is not out yet."""
-    today = pd.Timestamp(today or pd.Timestamp.utcnow().date())
+    today = pd.Timestamp(today or pd.Timestamp.now("UTC").date())
     base = f"https://data.binance.vision/data/{market}"
     tag = f"{symbol}-{interval}" if interval else f"{symbol}-{kind}"
     sub = f"{kind}/{symbol}/{interval}" if interval else f"{kind}/{symbol}"
@@ -198,7 +198,7 @@ def parse_cot(blob: bytes) -> pd.DataFrame:
 def job_cftc_cot(job, getter):
     report = job.get("report", "legacy")
     pattern = CFTC_FILES[report]
-    this_year = pd.Timestamp.utcnow().year
+    this_year = pd.Timestamp.now("UTC").year
     parts, missing = [], []
     for y in range(job.get("start_year", 2010), this_year + 1):
         name = pattern.format(y=y)

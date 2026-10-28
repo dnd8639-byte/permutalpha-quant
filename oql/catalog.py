@@ -175,6 +175,20 @@ def read(ds_id: str, start=None, end=None) -> pd.DataFrame:
     return df
 
 
+def slice_fingerprint(ds_id: str, end: str) -> str:
+    """SHA-256 of a dataset's rows up to and including `end`, in a fixed text form. New rows appended later (the
+    collector) do not change it; any change to an existing row (a vendor revision, an edit) does."""
+    df = read(ds_id)
+    if isinstance(df.index, pd.DatetimeIndex):
+        df = df[df.index <= pd.Timestamp(end)]
+    text = df.to_csv(float_format="%.10g", date_format="%Y-%m-%dT%H:%M:%S")
+    return hashlib.sha256(text.encode()).hexdigest()
+
+
+def last_timestamp(ds_id: str) -> str:
+    return str(read(ds_id).index.max())
+
+
 def list_all() -> list[Meta]:
     out = []
     for dirpath, _, files in os.walk(root()):

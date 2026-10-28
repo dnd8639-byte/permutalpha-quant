@@ -60,3 +60,28 @@ grids), on no-edge books, volatility-matched null with 39 shuffles. Raw results:
 
 On noise, searching hundreds of strategies finds a winner with a Sharpe near 0.9, but the same search on shuffled
 copies finds winners just as good, so the gate passes at no more than its promised rate.
+
+## A third null: the block bootstrap
+
+The block null cuts the history into blocks of 20 consecutive bars and shuffles the blocks (one order for every
+market). Inside a block everything is real; patterns longer than about 20 bars are broken. Same 300-gate study as
+above (raw results: `block_results.json`):
+
+| markets | bars | vol_matched | block | shuffled best (median), block |
+|---|---|---|---|---|
+| no edge, volatility clustering | 3% | 4% | 3% | 0.65 |
+| no edge, strong clustering | 1% | 1% | 2% | 0.65 |
+| real edge (persistent trends) | 96% | 98% | **88%** | 1.89 |
+
+What this shows:
+
+1. **All three nulls keep false alarms within 5%.**
+2. **The block null is the strictest against trend strategies.** The planted trends last about 67 bars on average,
+   so a 20-bar block still carries part of each trend: the shuffled markets keep some trendiness, the best strategy on
+   them scores much higher (median 1.89 vs 0.81 for the bar shuffle), and the real edge is caught less often (88%).
+   That is by design: the block null only credits structure LONGER than a block.
+3. **Choosing a null is choosing a question.** Bar shuffle: "is there any time structure?"; volatility-matched:
+   "is there structure beyond the volatility path?"; block: "is there structure beyond the market's short-term
+   behaviour?". Declaring several (`nulls=[...]`) requires the result to survive each.
+4. Under strong volatility clustering the block null is about as conservative as the bar shuffle (mean p 0.59 vs
+   0.60; volatility-matched 0.55): 20-bar blocks keep clustering inside each block but scramble it across blocks.

@@ -43,3 +43,45 @@ def claim(path: str, what: str) -> dict:
     with open(path, "x") as f:                        # 'x' fails if another process got there first
         json.dump(rec, f)
     return rec
+
+
+try:
+    import fcntl
+except ImportError:                                       # Windows: no advisory locks; single-user use is still safe
+    fcntl = None
+
+
+_held: dict = {}                                          # path -> depth: re-entrant within one process
+
+
+class hold:
+    """An exclusive lock on `path` for the duration of a `with` block (released automatically if the process dies).
+    blocking=False raises LockError at once if another process holds it. Re-entrant within a process."""
+
+    def __init__(self, path: str, blocking: bool = True, what: str = "this"):
+        self.path, self.blocking, self.what, self.f = os.path.abspath(path), blocking, what, None
+
+    def __enter__(self):
+        if _held.get(self.path):
+            _held[self.path] += 1
+            return self
+        os.makedirs(os.path.dirname(self.path), exist_ok=True)
+        self.f = open(self.path, "a+")
+        if fcntl is not None:
+            try:
+                fcntl.flock(self.f, fcntl.LOCK_EX | (0 if self.blocking else fcntl.LOCK_NB))
+            except BlockingIOError:
+                self.f.close()
+                raise LockError(f"{self.what} is already running in another process")
+        _held[self.path] = 1
+        return self
+
+    def __exit__(self, *exc):
+        _held[self.path] -= 1
+        if _held[self.path]:
+            return False
+        del _held[self.path]
+        if fcntl is not None:
+            fcntl.flock(self.f, fcntl.LOCK_UN)
+        self.f.close()
+        return False

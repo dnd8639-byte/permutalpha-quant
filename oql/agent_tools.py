@@ -128,6 +128,7 @@ def get_card(card_id: str) -> dict:
 
 
 # ---------------------------------------------------------------------------------------------- write (idea/research only)
+@board._locked
 def propose_idea(title: str, mechanism: str, hypothesis: str) -> dict:
     if len(mechanism.strip()) < 40:
         raise AgentError("explain the mechanism: why should this make money, and who is on the other side? (40+ characters)")
@@ -187,6 +188,7 @@ def write_preregistration(card_id: str, hypothesis: str = "TODO", mechanism: str
             **({"review": stale} if stale else {})}
 
 
+@board._locked
 def _mark_review_outdated(card_id: str, what: str) -> str | None:
     """A review summary describes the card as it was. Editing the card afterwards marks the summary as out of date,
     so the person reviewing knows to read the files, not the summary, or to ask for a fresh one."""
@@ -243,8 +245,8 @@ def write_experiment(card_id: str, datasets: list, rules: list | None = None, gr
         raise AgentError("rebalance_band must be between 0 (resize every bar) and 0.5")
     band_text = f"\n    rebalance_band={float(rebalance_band)!r}," if rebalance_band else ""
     nulls = list(nulls or ["bars"])
-    if not nulls or [m for m in nulls if m not in ("bars", "vol_matched")]:
-        raise AgentError("nulls must be a list of 'bars' and/or 'vol_matched'")
+    if not nulls or [m for m in nulls if m not in ("bars", "vol_matched", "block")]:
+        raise AgentError("nulls must be a list of 'bars', 'vol_matched' and/or 'block'")
     nulls_text = "" if nulls == ["bars"] else f"\n    nulls={nulls!r},"
     gate_text = "" if gates == ["none"] else f"\n    gates={gates!r},\n    gate_features={gate_features!r},"
     cost_bps = {k: float(v) for k, v in (cost_bps or {"default": 1.0}).items()}
@@ -414,6 +416,7 @@ def efficiency_study(dataset: str, groups: list | None = None) -> dict:
                        "Logged in the ledger as an exploration. Whether a gate helps a strategy is only settled by a card's gate test."}
 
 
+@board._locked
 def request_review(card_id: str, summary: str) -> dict:
     """Hand the card to a person: they read it, and only they can freeze it and run the gate."""
     bd = board.load()
@@ -463,7 +466,7 @@ TOOLS = {
                             "cost_bps": {"type": "object", "additionalProperties": NUM}, "alpha": NUM, "n_perm": INT,
                             "gates": {"type": "array", "items": {"type": "string", "enum": ["none", *GATES]},
                                       "description": "efficiency gates the search may add to strategies (default ['none'] = no gates). Each gate setting multiplies the search size."},
-                            "nulls": {"type": "array", "items": {"type": "string", "enum": ["bars", "vol_matched"]},
+                            "nulls": {"type": "array", "items": {"type": "string", "enum": ["bars", "vol_matched", "block"]},
                                       "description": "null models for the gate; PASS needs p < alpha under every one (default ['bars'])"},
                             "rebalance_band": {"type": "number", "description": "resize positions only in steps of (1 + band), e.g. 0.25, "
                                                "so hourly strategies stop paying to resize every bar; 0 (default) = every bar"},

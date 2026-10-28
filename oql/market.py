@@ -95,10 +95,12 @@ def rolling_efficiency(close: np.ndarray, window: int = WINDOW) -> np.ndarray:
 
 def rolling_vol(close: np.ndarray, window: int = WINDOW, per_year: float = 525_600) -> np.ndarray:
     """Annualized realized volatility of 1-minute log returns over the last `window` minutes."""
-    r = np.diff(np.log(np.asarray(close, float)))
+    c = np.asarray(close, float)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        r = np.diff(np.log(np.where(c > 0, c, np.nan)))       # a zero or missing price is a gap, not a -inf return
     out = np.full(len(close), np.nan)
     for i in range(window, len(close)):
-        out[i] = r[i - window:i].std(ddof=1) * np.sqrt(per_year)
+        out[i] = np.nanstd(r[i - window:i], ddof=1) * np.sqrt(per_year)
     return out
 
 

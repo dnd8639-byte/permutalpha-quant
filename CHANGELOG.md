@@ -3,6 +3,51 @@
 Changes that can alter what a test measures are marked **(affects results)**. A frozen card records the lab
 version it was frozen with, and its gate report shows both versions if they differ.
 
+## 0.9.1
+- Published on PyPI as **permutalpha** (`pip install permutalpha`; the import name and the `oql` command are
+  unchanged, and `permutalpha` works as a command too). Extras: `[trees]`, `[paper]`, `[all]`.
+- `oql demo [DIR]`: a ready lab on synthetic markets with two frozen cards, so a fresh install shows a PASS and a
+  FAIL in minutes.
+
+## 0.9.0: bulletproofing
+- **(affects results)** No position without a trustworthy volatility estimate. A flat or stale stretch (half of
+  the last 20 moves exactly zero: a pegged currency, a frozen feed) had a tiny measured volatility, and dividing by it
+  put the market at the 10x leverage cap. Such bars now get no position; normal markets are unaffected.
+- **Frozen data means the data at the freeze.** The freeze records each dataset's last timestamp and a fingerprint
+  of its rows up to then. Gate and holdout read only those rows, so the daily collector appending new data no longer
+  blocks a frozen card, while any change to an existing row (a vendor revision, an edit) is still refused. Cards
+  frozen before 0.9 keep the old whole-file check.
+- **Tests that cannot work are refused at the freeze:** n_perm too small to reach p < alpha, alpha above 0.2,
+  negative costs, a development share outside 30-95%, a fill delay outside [0, 1), unknown rules or gates, a
+  dataset listed twice, an experiment.py that does not load.
+- **Tamper-evident ledger.** Every row carries a hash chained to the row before; `oql ledger verify` reports any
+  edited, removed or reordered row, and `oql ledger head` prints the latest hash to publish (e.g. in a commit
+  message). An existing ledger is sealed as it stands the first time a row is added.
+- **Safe with several processes.** Board changes happen under a lab lock; a gate or holdout records its result on a
+  fresh copy of the board, so cards created or edited while a long gate ran are no longer overwritten; two gate
+  runs of the same card cannot overlap; ledger appends cannot fork the chain.
+- New test suite `tests/test_robust.py`: no look-ahead across every rule, side and gate setting; engine invariants on
+  messy markets (gaps, frozen feeds, fat tails); costs only ever reduce returns; the gate is deterministic across
+  process counts; frozen-data and validation behaviour; ledger tampering; concurrency.
+- Continuous integration (`.github/workflows/tests.yml`): the full suite on Python 3.10 with pandas 2 and Python
+  3.12 with pandas 3, on every push.
+- Removed deprecated `Timestamp.utcnow` calls (gone in a future pandas); live volatility ignores zero prices.
+
+## 0.8.0
+- **Third null model: block bootstrap** (`nulls=["block"]`). The history is cut into 20-bar blocks (random grid
+  offset) and the blocks are shuffled, one order for all markets: volatility clustering, short-term persistence and
+  cross-market co-movement survive inside each block; longer patterns are broken.
+- Calibration (docs/CALIBRATION.md): false alarms 3% and 2% on no-edge markets; it catches 88% of planted trend
+  edges against 96-98% for the other two nulls, because 20-bar blocks keep part of each ~67-bar trend. It is the
+  strictest test for trend strategies and only credits structure longer than a block.
+
+## 0.7.1
+- **Holdout power analysis.** A holdout FAIL only means something if the holdout could have seen the edge. Every
+  holdout now writes `holdout.md` with: the Sharpe's 95% interval, the bar it had to beat, the smallest true Sharpe
+  it detects 80% of the time, the chance it would have passed if the edge were as strong as in development, and a
+  test of whether the edge shrank. `oql card holdout-power ID` writes the same report for a holdout already run
+  (it recomputes the shuffles for the frozen finalist; the recorded verdict, ledger and stage are unchanged).
+
 ## 0.7.0
 - **Project 11, large search** (Projects tab): the lab's search loop at growing sizes, up to about 3,000 distinct
   strategies from dense grids, on a synthetic book with a known truth. For each size it compares a naive t-test of

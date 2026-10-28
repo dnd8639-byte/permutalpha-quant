@@ -207,7 +207,7 @@ def binance(symbol: str, interval: str = "1h", start: str = "2018-01", end: str 
             market: str = "spot", verbose: bool = True):
     """Monthly kline files from data.binance.vision. Timestamps switch from ms to microseconds in 2025;
     both are handled. Months that do not exist yet (or are not published) are skipped and reported."""
-    end = end or (pd.Timestamp.utcnow() - pd.offsets.MonthBegin(1)).strftime("%Y-%m")
+    end = end or (pd.Timestamp.now("UTC") - pd.offsets.MonthBegin(1)).strftime("%Y-%m")
     parts, missing = [], []
     for m in pd.period_range(start, end, freq="M"):
         url = (f"https://data.binance.vision/data/{market}/monthly/klines/{symbol}/{interval}/"

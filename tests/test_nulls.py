@@ -64,7 +64,7 @@ class TestVolMatchedNull(Base):
         with open(os.path.join(d, "PREREGISTRATION.md"), "w") as f:
             f.write("# done\n")
         with open(os.path.join(d, "experiment.py"), "w") as f:
-            f.write('from oql.experiment import Experiment\nEXPERIMENT = Experiment(datasets=["noise/m0/1d"], nulls=["block"])\n')
+            f.write('from oql.experiment import Experiment\nEXPERIMENT = Experiment(datasets=["noise/m0/1d"], nulls=["nope"])\n')
         board.start(c["id"])
         with self.assertRaises(board.BoardError):
             board.freeze(c["id"])
@@ -109,13 +109,43 @@ class TestLargeSearch(unittest.TestCase):
         self.assertTrue(checks and all(c["passed"] for c in checks), checks)
 
 
+class TestHoldoutPower(Base):
+    def test_longer_holdouts_detect_smaller_edges(self):
+        from oql.stats import holdout_power
+        null = np.random.default_rng(0).normal(0, 0.25, 199)
+        short, long_ = holdout_power(0.0, null, 3, 1.0, 20), holdout_power(0.0, null, 20, 1.0, 20)
+        self.assertLess(long_["mde80"], short["mde80"])
+        self.assertGreater(long_["power_at_dev"], short["power_at_dev"])
+        self.assertLess(long_["decay_p"], short["decay_p"])
+
+    def test_report_written_at_the_holdout_and_afterwards(self):
+        from oql import board, catalog, synthetic
+        ids = [catalog.write(f"trend/m{i}/1d", synthetic.trend_market(seed=i), license="own", origin="synthetic").id for i in range(3)]
+        c = board.new_card("power", "Regimes persist by construction, so trends continue in these markets.")
+        d = board.card_dir(c)
+        with open(os.path.join(d, "PREREGISTRATION.md"), "w") as f:
+            f.write("# done\n")
+        with open(os.path.join(d, "experiment.py"), "w") as f:
+            f.write(f"from oql.experiment import Experiment\nEXPERIMENT = Experiment(datasets={ids!r}, rules=['momentum'], n_perm=39)\n")
+        board.start(c["id"]); board.freeze(c["id"])
+        self.assertEqual(board.run_gate(c["id"], procs=2)["verdict"], "PASS")
+        r = board.run_holdout(c["id"], procs=2)
+        self.assertIn("mde80", r["power"])
+        with open(os.path.join(d, "holdout.md")) as f:
+            first = f.read()
+        self.assertIn("What this holdout could detect", first)
+        again = board.holdout_power_report(c["id"], procs=2)                     # rerun: same verdict, same report
+        self.assertEqual(first, again)
+        self.assertEqual(board.get(board.load(), c["id"])["results"]["holdout"]["verdict"], r["verdict"])
+
+
 class TestCalibration(unittest.TestCase):
     def test_one_calibration_gate(self):
         from oql.calibration import _one, summarize
         r = [_one(("noise", 0, 9)), _one(("trend", 1, 9))]
         self.assertTrue(all(0 < x["bars"] <= 1 and 0 < x["vol_matched"] <= 1 for x in r))
         self.assertEqual(r[1]["bars"], 0.1)                                              # a real edge beats all 9
-        self.assertEqual(len(summarize(r)), 4)
+        self.assertEqual(len(summarize(r)), 6)                                          # 2 kinds x 3 nulls
 
 
 if __name__ == "__main__":

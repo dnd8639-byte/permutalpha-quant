@@ -20,12 +20,15 @@ PIPELINE
   oql card freeze ID         research -> preregistered (fingerprints the rules; no TODOs allowed)
   oql card gate ID           runs the search + whole-search permutation test; FAIL archives the card
   oql card holdout ID        ONE-SHOT test on the last 30%; FAIL archives the card
+  oql card holdout-power ID  what a finished holdout could have detected (writes holdout.md; verdict unchanged)
   oql card paper ID          holdout -> paper trading
   oql card archive ID --reason "..."
   oql card revise ID         new card in the same family (trial counts keep adding up)
   oql card show ID
   oql board [--html board.html]
   oql ledger
+  oql ledger verify          check the ledger's hash chain: any edited, removed or reordered row is reported
+  oql ledger head            the latest chain value: publish it (e.g. in a commit message) to timestamp the history
 
 PAPER TRADING (no orders are ever sent)
   oql paper deploy ID --feed DATASET=EXCHANGE:SYMBOL:TIMEFRAME   e.g. binance/BTCUSDT/1h=binanceus:BTC/USDT:1h
@@ -41,6 +44,9 @@ COLLECTOR (run daily on the Pi)
 EFFICIENCY (development data only; every run is logged in the ledger; see docs/EFFICIENCY.md)
   oql efficiency study DATASET [--groups calendar,funding,basis,macro,positioning,orderbook] [--model ridge|trees]
   oql efficiency gates DATASET "STRATEGY" [--cost 2]   every efficiency gate on one strategy, e.g. "momentum lookback=20"
+
+START HERE
+  oql demo [DIR]             a lab on synthetic markets with two frozen cards (default ./oql-demo); then oql serve
 
 AI ASSISTANT (Model Context Protocol server; see docs/AGENTS.md)
   oql mcp                    run the lab's tools for an AI assistant over stdio
@@ -125,6 +131,10 @@ def _card(a):
     elif a.cmd == "holdout":
         r = board.run_holdout(a.id, procs=a.procs)
         print(f"HOLDOUT {r['verdict']}: Sharpe {r['holdout_sharpe']:.2f}, p = {r['p']:.3f} ({r['start'][:10]} -> {r['end'][:10]})")
+        from .stats import holdout_power_text
+        print(holdout_power_text(r["power"]))
+    elif a.cmd == "holdout-power":
+        print(board.holdout_power_report(a.id, procs=a.procs))
     elif a.cmd == "paper":
         print(board.to_paper(a.id)["stage"])
     elif a.cmd == "archive":
@@ -160,12 +170,12 @@ def main(argv=None):
     x = c.add_parser("new"); x.add_argument("title"); x.add_argument("--mechanism", default="")
     for name in ("start", "freeze", "paper", "revise", "show"):
         c.add_parser(name).add_argument("id")
-    for name in ("gate", "holdout"):
+    for name in ("gate", "holdout", "holdout-power"):
         x = c.add_parser(name); x.add_argument("id"); x.add_argument("--procs", type=int, default=None)
     x = c.add_parser("archive"); x.add_argument("id"); x.add_argument("--reason", required=True)
 
     b = sub.add_parser("board"); b.add_argument("--html", default=None)
-    sub.add_parser("ledger")
+    lg = sub.add_parser("ledger"); lg.add_argument("cmd", nargs="?", choices=["verify", "head"], default=None)
     pp = sub.add_parser("paper").add_subparsers(dest="cmd", required=True)
     x = pp.add_parser("deploy"); x.add_argument("id"); x.add_argument("--feed", action="append", required=True)
     pp.add_parser("step"); pp.add_parser("status")
@@ -176,6 +186,7 @@ def main(argv=None):
     e = sub.add_parser("efficiency").add_subparsers(dest="cmd", required=True)
     x = e.add_parser("study"); x.add_argument("dataset"); x.add_argument("--groups", default=""); x.add_argument("--model", default="ridge")
     x = e.add_parser("gates"); x.add_argument("dataset"); x.add_argument("strategy"); x.add_argument("--cost", type=float, default=2.0)
+    x = sub.add_parser("demo"); x.add_argument("dir", nargs="?", default="oql-demo")
     sub.add_parser("mcp")
     s = sub.add_parser("serve"); s.add_argument("--port", type=int, default=8765); s.add_argument("--no-browser", action="store_true")
 
@@ -218,6 +229,12 @@ def main(argv=None):
                 print(collect.status())
         elif a.area == "efficiency":
             _efficiency(a)
+        elif a.area == "demo":
+            from .demo import build
+            lab = build(a.dir)
+            print(f"demo lab ready: {lab}\n"
+                  f"  OQL_LAB={lab} OQL_CATALOG={lab}/catalog oql serve\n"
+                  "then run both gates from the Research board: the planted edge should PASS and the noise FAIL.")
         elif a.area == "mcp":
             from .mcp_server import serve as mcp_serve
             mcp_serve()
@@ -226,6 +243,14 @@ def main(argv=None):
             serve(a.port, not a.no_browser)
         elif a.area == "ledger":
             from . import board, ledger
+            if a.cmd == "verify":
+                v = ledger.verify(board.lab_dir())
+                print(f"ledger OK: {v['rows']} rows, chain intact, head {v['head'][:16]}" if v["ok"] else
+                      f"LEDGER BROKEN at row {v['first_bad']} of {v['rows']}: {v['why']}")
+                sys.exit(0 if v["ok"] else 1)
+            if a.cmd == "head":
+                print(ledger.verify(board.lab_dir())["head"])
+                return
             rows = ledger.rows(board.lab_dir())
             for r in rows:
                 print(f"{r['utc']}  {r['kind']:8s} {r['verdict']:5s} p={r['p']:7s} SR={r['sharpe']:7s} trials={r['n_trials']:4s} {r['card']}")
@@ -234,7 +259,7 @@ def main(argv=None):
             x = sum(int(r["n_trials"] or 1) for r in rows if r["kind"] == "explore")   # a gate check row stands for many settings
             print(f"{n} test{'' if n == 1 else 's'} ({sum(r['verdict'] == 'PASS' for r in tests)} passed) · "
                   f"{x} exploration{'' if x == 1 else 's'} before freezes")
-    except (BoardError, LockError, KeyError, ValueError) as e:
+    except (BoardError, LockError, KeyError, ValueError, FileExistsError) as e:
         sys.exit(f"refused: {e}")
     except OSError as e:                                   # network problems: one clear line, not a traceback
         sys.exit(f"network error: {e}. Check the connection; if it mentions certificates, run `pip install -e .` again.")

@@ -30,7 +30,7 @@ from .search import Scorer, search
 from .synthetic import _bars, trend_market
 
 KINDS = ("noise", "wild", "trend")
-NULLS = ("bars", "vol_matched")
+NULLS = ("bars", "vol_matched", "block")
 
 
 def clustered_market(n=2000, seed=0, vol=0.01, persistence=0.97, shock=0.1) -> pd.DataFrame:

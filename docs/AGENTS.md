@@ -32,11 +32,11 @@ For example:
 ```bash
 mkdir -p ~/quant
 python3 -m venv ~/quant/.venv
-~/quant/.venv/bin/pip install /path/to/open-quant-lab    # a copy, not -e: the code must live outside too
+~/quant/.venv/bin/pip install permutalpha    # from PyPI (or a path to the code; a copy, not -e)
 # keep the catalog (OQL_CATALOG) and the lab (OQL_LAB) under ~/quant as well
 ```
 
-After changing the lab's code, run the same `pip install` again to update the assistant's copy.
+To update the assistant's copy, run `~/quant/.venv/bin/pip install -U permutalpha` (or the same path again).
 
 **2. Add the server to the config.** Open the Claude menu in the macOS menu bar, then Settings…, Developer, Edit Config
 (the file is `~/Library/Application Support/Claude/claude_desktop_config.json`). If the file already has settings, put

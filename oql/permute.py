@@ -15,11 +15,17 @@ Two nulls (`method`):
                  the standardized bars are shuffled, and each is multiplied back by the volatility of the slot it
                  lands in. The null keeps the real volatility path (calm periods stay calm, crises stay at their
                  dates) and destroys only the order of the standardized moves.
+  "block"        the history is cut into blocks of BLOCK consecutive bars and the blocks are put in a random order
+                 (one order for every market). Inside a block everything is real: volatility clustering, short-term
+                 persistence or reversal, cross-market co-movement. Patterns longer than a block are broken. It asks
+                 whether a strategy earns more than the market's short-term structure alone explains.
 """
 from __future__ import annotations
 
 import numpy as np
 import pandas as pd
+
+BLOCK = 20                            # bars per block for the block null
 
 
 def smooth_vol(close: np.ndarray, halflife: float = 20.0) -> np.ndarray:
@@ -34,9 +40,22 @@ def smooth_vol(close: np.ndarray, halflife: float = 20.0) -> np.ndarray:
     return np.maximum(v, floor)
 
 
+def block_permutation(n: int, block: int, rng) -> np.ndarray:
+    """A random ordering of range(n) made of contiguous runs of `block` indices, kept in order (the last run may be
+    shorter). The starting offset of the block grid is random too, so no bar is always at a block edge."""
+    if n <= 0:
+        return np.arange(0)
+    block = max(1, int(block))
+    off = int(rng.integers(block)) if block > 1 else 0
+    cuts = np.arange(off, n, block)
+    cuts = cuts[cuts > 0]
+    blocks = np.split(np.arange(n), cuts)
+    return np.concatenate([blocks[i] for i in rng.permutation(len(blocks))])
+
+
 def permute_ohlc(ohlc, start_index=0, seed=None, method="bars"):
-    if method not in ("bars", "vol_matched"):
-        raise ValueError(f"unknown null {method!r}: bars or vol_matched")
+    if method not in ("bars", "vol_matched", "block"):
+        raise ValueError(f"unknown null {method!r}: bars, vol_matched or block")
     rng = np.random.default_rng(seed)
     single = not isinstance(ohlc, list)
     mkts = [ohlc] if single else ohlc
@@ -51,7 +70,10 @@ def permute_ohlc(ohlc, start_index=0, seed=None, method="bars"):
         rel.append(dict(o=(lb["open"] - lb["close"].shift()).to_numpy()[p0:] / s, h=(lb["high"] - lb["open"]).to_numpy()[p0:] / s,
                         l=(lb["low"] - lb["open"]).to_numpy()[p0:] / s, c=(lb["close"] - lb["open"]).to_numpy()[p0:] / s,
                         s=s, start=lb.iloc[start_index].to_numpy(), real=lb.to_numpy()))
-    perm1, perm2 = rng.permutation(pn), rng.permutation(pn)          # intrabar moves and gaps shuffled separately
+    if method == "block":                                            # one block order for intrabar moves and gaps,
+        perm1 = perm2 = block_permutation(pn, BLOCK, rng)            # so each block's days stay whole
+    else:
+        perm1, perm2 = rng.permutation(pn), rng.permutation(pn)      # intrabar moves and gaps shuffled separately
     out = []
     for r in rel:
         s = r["s"]                                                   # each slot keeps its own volatility

@@ -36,6 +36,35 @@ def lab_dir() -> str:
     return os.environ.get("OQL_LAB", os.getcwd())
 
 
+def _lab_lock(lab=None):
+    return locks.hold(os.path.join(lab or lab_dir(), ".board.lock"), what="a board change")
+
+
+def _locked(fn):
+    """Read-modify-write of board.json under the lab lock, so two processes (the dashboard, the command line, the
+    assistant) cannot overwrite each other's changes."""
+    import functools
+    import inspect
+    sig = inspect.signature(fn)
+
+    @functools.wraps(fn)
+    def wrapper(*a, **kw):
+        lab = sig.bind_partial(*a, **kw).arguments.get("lab")
+        with _lab_lock(lab):
+            return fn(*a, **kw)
+    return wrapper
+
+
+def _update_card(lab, cid, change):
+    """Apply `change(card)` to a fresh copy of the board and save it, under the lab lock."""
+    with _lab_lock(lab):
+        board = load(lab)
+        card = get(board, cid)
+        change(card)
+        save(board, lab)
+        return card
+
+
 def _board_path(lab):
     return os.path.join(lab, "board.json")
 
@@ -124,6 +153,7 @@ EXPERIMENT = Experiment(
 '''
 
 
+@_locked
 def new_card(title: str, mechanism: str = "", lab=None, family: str | None = None) -> dict:
     lab = lab or lab_dir()
     board = load(lab)
@@ -147,6 +177,7 @@ def new_card(title: str, mechanism: str = "", lab=None, family: str | None = Non
     return card
 
 
+@_locked
 def start(cid: str, lab=None) -> dict:
     board = load(lab); card = get(board, cid)
     _require(card, "idea")
@@ -155,6 +186,7 @@ def start(cid: str, lab=None) -> dict:
     return card
 
 
+@_locked
 def freeze(cid: str, lab=None) -> dict:
     from .experiment import load as load_exp
     lab = lab or lab_dir()
@@ -166,17 +198,26 @@ def freeze(cid: str, lab=None) -> dict:
         text = f.read()
     if "TODO" in text:
         raise BoardError("PREREGISTRATION.md still has TODO sections. Fill every one before freezing.")
-    exp = load_exp(expf)
+    try:
+        exp = load_exp(expf)
+    except Exception as e:                                    # a typo in experiment.py: say so plainly
+        raise BoardError(f"experiment.py does not load: {type(e).__name__}: {e}")
     if not exp.datasets:
         raise BoardError("experiment.py lists no datasets.")
     for ds in exp.datasets:
         catalog.meta(ds)                                       # raises if a dataset is missing
     exp.rule_table()                                           # raises on an unknown rule
-    bad = [m for m in getattr(exp, "nulls", ["bars"]) if m not in ("bars", "vol_matched")]
+    bad = [m for m in getattr(exp, "nulls", ["bars"]) if m not in ("bars", "vol_matched", "block")]
     if bad or not getattr(exp, "nulls", ["bars"]):
-        raise BoardError(f"nulls must be a non-empty list of 'bars' and/or 'vol_matched', got {getattr(exp, 'nulls', None)}")
+        raise BoardError(f"nulls must be a non-empty list of 'bars', 'vol_matched' and/or 'block', got {getattr(exp, 'nulls', None)}")
+    from .experiment import validate
+    problems = validate(exp)
+    if problems:
+        raise BoardError("experiment.py: " + "; ".join(problems))
     frozen = locks.freeze([pre, expf])
     frozen["data"] = {ds: catalog.meta(ds).sha256 for ds in exp.datasets}
+    ends = {ds: catalog.last_timestamp(ds) for ds in exp.datasets}
+    frozen["data_slices"] = {ds: {"end": ends[ds], "sha256": catalog.slice_fingerprint(ds, ends[ds])} for ds in exp.datasets}
     from . import __version__
     frozen["oql_version"] = __version__                       # the lab's own code can change what a frozen card means
     exp_log = os.path.join(d, "explorations.jsonl")
@@ -198,10 +239,24 @@ def _verify(card, lab):
     with open(os.path.join(d, "frozen.json")) as f:
         frozen = json.load(f)
     locks.verify(frozen, d)
-    for ds, h in frozen.get("data", {}).items():
+    if "data_slices" in frozen:                                # 0.9+: rows up to the freeze must be unchanged; new rows are ignored
+        for ds, s in frozen["data_slices"].items():
+            if catalog.slice_fingerprint(ds, s["end"]) != s["sha256"]:
+                raise locks.LockError(f"rows of {ds} up to {s['end'][:16]} changed since the freeze (a revision or an edit). "
+                                      "A test on different data is a new test: revise the card.")
+        return frozen
+    for ds, h in frozen.get("data", {}).items():               # cards frozen before 0.9: the whole file
         if catalog.meta(ds).sha256 != h:
             raise locks.LockError(f"dataset {ds} changed since the freeze. A test on different data is a new test: revise the card.")
     return frozen
+
+
+def _frozen_exp(d: str, frozen: dict):
+    """The card's experiment, reading only the data that existed at the freeze."""
+    from .experiment import load as load_exp
+    exp = load_exp(os.path.join(d, "experiment.py"))
+    exp.data_ends = {ds: s["end"] for ds, s in frozen.get("data_slices", {}).items()}
+    return exp
 
 
 def run_gate(cid: str, lab=None, procs=None) -> dict:
@@ -216,7 +271,7 @@ def run_gate(cid: str, lab=None, procs=None) -> dict:
     d = card_dir(card, lab)
     if os.path.exists(os.path.join(d, "gate.json")):
         raise locks.LockError("this card's gate already ran; its report is gate.md")
-    exp = load_exp(os.path.join(d, "experiment.py"))
+    exp = _frozen_exp(d, frozen)
     prog_path = os.path.join(d, "gate_progress.jsonl")
     prog = open(prog_path, "w")
 
@@ -224,7 +279,10 @@ def run_gate(cid: str, lab=None, procs=None) -> dict:
         prog.write(json.dumps({"utc": time.time(), **event}) + "\n")
         prog.flush()
     try:
-        rep = gate(exp, procs=procs, progress=progress)
+        with locks.hold(os.path.join(d, ".gate.lock"), blocking=False, what="the gate for this card"):
+            if os.path.exists(os.path.join(d, "gate.json")):   # another process finished it while we were waiting
+                raise locks.LockError("this card's gate already ran; its report is gate.md")
+            rep = gate(exp, procs=procs, progress=progress)
     finally:
         prog.close()
     rep["family_trials_before"] = ledger.trials_in_family(lab, card["family"])
@@ -242,12 +300,10 @@ def run_gate(cid: str, lab=None, procs=None) -> dict:
     ledger.append(lab, card=card["id"], family=card["family"], kind="gate", verdict=rep["verdict"], p=round(rep["p"], 4),
                   sharpe=round(rep["dev_sharpe"], 3), n_trials=rep["n_trials"], finalist=rep["finalist"],
                   data=";".join(exp.datasets))
-    card["results"]["gate"] = {k: rep[k] for k in ("verdict", "p", "dev_sharpe", "n_trials", "finalist", "split")}
-    if rep["verdict"] == "PASS":
-        _move(card, "gate", f"gate PASS, p={rep['p']:.3f}")
-    else:
-        _move(card, "archive", f"gate FAIL, p={rep['p']:.3f}")
-    save(board, lab)
+    def record(c):                                         # on a FRESH board: others may have changed it meanwhile
+        c["results"]["gate"] = {k: rep[k] for k in ("verdict", "p", "dev_sharpe", "n_trials", "finalist", "split")}
+        _move(c, "gate" if rep["verdict"] == "PASS" else "archive", f"gate {rep['verdict']}, p={rep['p']:.3f}")
+    _update_card(lab, cid, record)
     return rep
 
 
@@ -257,22 +313,64 @@ def run_holdout(cid: str, lab=None, procs=None) -> dict:
     lab = lab or lab_dir()
     board = load(lab); card = get(board, cid)
     _require(card, "gate")
-    _verify(card, lab)
+    frozen = _verify(card, lab)
     d = card_dir(card, lab)
     locks.claim(os.path.join(d, "holdout.lock"), "the holdout for this card")    # lock FIRST, then look
-    exp = load_exp(os.path.join(d, "experiment.py"))
+    exp = _frozen_exp(d, frozen)
     g = card["results"]["gate"]
     rep = holdout(exp, g["finalist"], g["split"], procs=procs)
+    rep["power"] = _power(rep, g, exp.alpha)
     with open(os.path.join(d, "holdout.json"), "w") as f:
         json.dump(rep, f, indent=1, default=float)
+    with open(os.path.join(d, "holdout.md"), "w") as f:
+        f.write(holdout_markdown(card, rep))
     ledger.append(lab, card=card["id"], family=card["family"], kind="holdout", verdict=rep["verdict"], p=round(rep["p"], 4),
                   sharpe=round(rep["holdout_sharpe"], 3), finalist=g["finalist"], data=";".join(exp.datasets))
-    card["results"]["holdout"] = {k: rep[k] for k in ("verdict", "p", "holdout_sharpe", "start", "end")}
-    _move(card, "holdout" if rep["verdict"] == "PASS" else "archive", f"holdout {rep['verdict']}, Sharpe {rep['holdout_sharpe']:.2f}")
-    save(board, lab)
+    def record(c):
+        c["results"]["holdout"] = {k: rep[k] for k in ("verdict", "p", "holdout_sharpe", "start", "end")}
+        _move(c, "holdout" if rep["verdict"] == "PASS" else "archive", f"holdout {rep['verdict']}, Sharpe {rep['holdout_sharpe']:.2f}")
+    _update_card(lab, cid, record)
     return rep
 
 
+def _power(rep: dict, g: dict, alpha: float) -> dict:
+    from .stats import holdout_power
+    return holdout_power(rep["holdout_sharpe"], rep["null"], rep["years"], g.get("dev_sharpe"), rep.get("dev_years"), alpha)
+
+
+def holdout_markdown(card: dict, r: dict) -> str:
+    from .stats import holdout_power_text
+    return (f"# Holdout report: {card['title']}\n\n**{r['verdict']}** · holdout Sharpe {r['holdout_sharpe']:.2f} · "
+            f"permutation p = {r['p']:.3f} ({r.get('null_model', 'bars')} null, {r['n_perm']} shuffles) · "
+            f"{r['start'][:10]} to {r['end'][:10]}\n\n## What this holdout could detect\n\n{holdout_power_text(r['power'])}\n")
+
+
+def holdout_power_report(cid: str, lab=None, procs=None) -> str:
+    """Power analysis for a holdout that has ALREADY been run (cards from before this report existed). It recomputes
+    the shuffled holdouts for the frozen finalist; the verdict, the ledger and the card's stage are not touched."""
+    from .experiment import load as load_exp
+    from .gate import run_holdout as holdout
+    lab = lab or lab_dir()
+    card = get(load(lab), cid)
+    d = card_dir(card, lab)
+    if not os.path.exists(os.path.join(d, "holdout.json")):
+        raise BoardError("this card's holdout has not been run; its report will include the power analysis")
+    with open(os.path.join(d, "holdout.json")) as f:
+        old = json.load(f)
+    exp = _frozen_exp(d, _verify(card, lab))
+    g = card["results"]["gate"]
+    rep = holdout(exp, g["finalist"], g["split"], procs=procs, n_perm=old.get("n_perm", 199))
+    if abs(rep["holdout_sharpe"] - old["holdout_sharpe"]) > 1e-9:
+        raise BoardError("recomputed holdout Sharpe differs from the recorded one: the data or code changed since")
+    rep.update(verdict=old["verdict"], p=old["p"])                       # the recorded verdict stands
+    rep["power"] = _power(rep, g, exp.alpha)
+    text = holdout_markdown(card, rep)
+    with open(os.path.join(d, "holdout.md"), "w") as f:
+        f.write(text)
+    return text
+
+
+@_locked
 def to_paper(cid: str, lab=None, note: str = "") -> dict:
     board = load(lab); card = get(board, cid)
     _require(card, "holdout")
@@ -281,6 +379,7 @@ def to_paper(cid: str, lab=None, note: str = "") -> dict:
     return card
 
 
+@_locked
 def archive(cid: str, reason: str, lab=None) -> dict:
     board = load(lab); card = get(board, cid)
     if card["stage"] == "archive":
@@ -290,6 +389,7 @@ def archive(cid: str, reason: str, lab=None) -> dict:
     return card
 
 
+@_locked
 def revise(cid: str, lab=None) -> dict:
     """A changed version of a tested idea: a new card in the same family, back at research, files copied, unfrozen."""
     lab = lab or lab_dir()

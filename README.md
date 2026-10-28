@@ -1,8 +1,13 @@
-# Open Quant Lab
+# permutalpha (Open Quant Lab)
+
+```bash
+pip install permutalpha
+oql demo && OQL_LAB=oql-demo OQL_CATALOG=oql-demo/catalog oql serve
+```
 
 A fully open research pipeline for trading strategies: a data catalog, a backtest engine with costs and delays, and a validation gate that the strategy has to pass before anything else happens. The rules of every test are enforced by code, not by good intentions.
 
-Designed and built by David DeConti. MIT licence. Inspired by the shape of QuantConnect's research pipeline (Ideas → Research → Backtest → Paper → Live), rebuilt so that no part of it is paid, and so that a strategy cannot be promoted by trying things until one looks good.
+Designed and directed by David DeConti, with much of the code written with an AI assistant (Claude). MIT licence. Inspired by the shape of QuantConnect's research pipeline (Ideas → Research → Backtest → Paper → Live), rebuilt so that no part of it is paid, and so that a strategy cannot be promoted by trying things until one looks good.
 
 **Live demo:** the validation gate runs in your browser at [dnd8639-byte.github.io/open-quant-lab](https://dnd8639-byte.github.io/open-quant-lab/).
 It is a JavaScript port of the engine, rules and search; `python demo/check_parity.py` confirms that it computes the same
@@ -31,11 +36,26 @@ The lab checks itself: on fake markets with a planted, real edge the gate passes
 ## Install
 
 ```bash
-python3 -m venv .venv && source .venv/bin/activate
-pip install -e .            # numpy, pandas, pyarrow
-python -m unittest discover tests
-python examples/quickstart.py
+pip install permutalpha              # numpy, pandas, pyarrow
+pip install "permutalpha[all]"       # + scikit-learn (tree forecasts) and ccxt (live paper trading)
+oql demo                             # a lab on synthetic markets, two cards frozen and ready for their gate
+OQL_LAB=oql-demo OQL_CATALOG=oql-demo/catalog oql serve
 ```
+
+Run both gates from the Research board: the planted edge passes and the pure noise fails. From source:
+
+```bash
+git clone https://github.com/dnd8639-byte/permutalpha-quant && cd permutalpha-quant/lab
+pip install -e . && python -m unittest discover tests
+```
+
+## An AI research assistant that cannot cheat
+
+`oql mcp` serves the lab to any Model Context Protocol client (Claude Desktop, Claude Code, or a local model). The
+assistant can read the board and data, propose ideas, write pre-registrations and experiments from validated fields
+(never code), explore development data and run efficiency studies. It cannot freeze a card, run the gate or the
+holdout, or deploy: those stay with a person. Every exploration it makes is logged and printed next to the final
+result. Setup: [docs/AGENTS.md](https://github.com/dnd8639-byte/permutalpha-quant/blob/main/lab/docs/AGENTS.md).
 
 ## Use
 
@@ -82,7 +102,7 @@ oql collect init && oql collect run                                  # keep free
   positioning and order-book data, walk-forward on development data? And does switching a strategy on and off by
   efficiency help it, and how strong would the forecast need to be? Every run checks itself on synthetic markets
   first and is counted in the ledger. Gates found here are tested for real by declaring them in a card's experiment
-  (`gates=[...]`), where the gate test reruns them on shuffled data. See [docs/EFFICIENCY.md](docs/EFFICIENCY.md).
+  (`gates=[...]`), where the gate test reruns them on shuffled data. See [docs/EFFICIENCY.md](https://github.com/dnd8639-byte/permutalpha-quant/blob/main/lab/docs/EFFICIENCY.md).
 
 Holdouts are deliberately not runnable from the page: they are one-shot, so they need a typed command.
 
@@ -121,7 +141,7 @@ Holdouts are deliberately not runnable from the page: they are one-shot, so they
 - [x] Phase 4: pipeline board (command line + HTML)
 - [x] Phase 5: an MCP server (`oql mcp`) so an AI assistant can propose cards, write pre-registrations and
       experiments, and explore development data; it cannot freeze, run the gate or holdout, or deploy, and every
-      exploration it makes is counted in the gate report. See [docs/AGENTS.md](docs/AGENTS.md)
+      exploration it makes is counted in the gate report. See [docs/AGENTS.md](https://github.com/dnd8639-byte/permutalpha-quant/blob/main/lab/docs/AGENTS.md)
 
-Building on it: [docs/DEVELOPING.md](docs/DEVELOPING.md). Running it on a Pi: [deploy/README.md](deploy/README.md).
-See [NOTICE.md](NOTICE.md) for credits.
+Building on it: [docs/DEVELOPING.md](https://github.com/dnd8639-byte/permutalpha-quant/blob/main/lab/docs/DEVELOPING.md). Running it on a Pi: [deploy/README.md](https://github.com/dnd8639-byte/permutalpha-quant/blob/main/lab/deploy/README.md).
+See [NOTICE.md](https://github.com/dnd8639-byte/permutalpha-quant/blob/main/lab/NOTICE.md) for credits.

@@ -45,6 +45,7 @@ class Experiment:
     gates: list = field(default_factory=lambda: ["none"])   # efficiency gates the search may add: none, er_trailing, er_forecast
     gate_grid: dict = field(default_factory=dict)     # per-gate settings that replace the defaults in oql.gates.GATES
     gate_features: list = field(default_factory=lambda: ["price"])   # feature groups for er_forecast (oql.efficiency.GROUPS)
+    data_ends: dict = field(default_factory=dict)     # set by the board from the freeze: rows after these are ignored
     custom_rules: dict = field(default_factory=dict)
     path: str = ""
 
@@ -88,8 +89,38 @@ def load_book(exp: Experiment) -> dict:
         m = catalog.meta(ds)
         if m.kind != "bars":
             raise ValueError(f"{ds} is a table, not price bars")
-        book[ds] = catalog.read(ds, exp.start, exp.end)
+        df = catalog.read(ds, exp.start, exp.end)
+        if ds in exp.data_ends:                          # the data as it was at the freeze, nothing added since
+            df = df[df.index <= pd.Timestamp(exp.data_ends[ds])]
+        book[ds] = df
     return book
+
+
+def validate(exp: Experiment) -> list[str]:
+    """Problems that would make a test meaningless or impossible to pass. Checked at the freeze."""
+    out = []
+    if not 0 < exp.alpha <= 0.2:
+        out.append(f"alpha must be in (0, 0.2], got {exp.alpha}")
+    elif exp.n_perm + 1 < 1 / exp.alpha:
+        out.append(f"n_perm = {exp.n_perm} cannot reach p < {exp.alpha} (the smallest possible p is 1/(n_perm+1)); "
+                   f"use at least {int(round(1 / exp.alpha))}")
+    if not 0.3 <= exp.dev_frac <= 0.95:
+        out.append(f"dev_frac must be between 0.3 and 0.95, got {exp.dev_frac}")
+    if not 0 <= exp.delay < 1:
+        out.append(f"delay is a fraction of a bar, between 0 and 1; got {exp.delay}")
+    if any(float(v) < 0 for v in exp.cost_bps.values()):
+        out.append("costs cannot be negative")
+    if exp.min_trades_per_year < 0 or exp.warmup < 0 or exp.rounds < 0 or exp.pop_init < 1:
+        out.append("min_trades_per_year, warmup and rounds must be >= 0 and pop_init >= 1")
+    if not 0 <= exp.rebalance_band <= 0.5:
+        out.append(f"rebalance_band must be between 0 and 0.5, got {exp.rebalance_band}")
+    if len(set(exp.datasets)) != len(exp.datasets):
+        out.append("a dataset is listed twice")
+    try:
+        exp.rule_table(); exp.gate_table()
+    except KeyError as e:
+        out.append(str(e))
+    return out
 
 
 def split_date(book: dict, frac: float) -> pd.Timestamp:

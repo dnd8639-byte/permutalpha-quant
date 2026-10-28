@@ -3,20 +3,51 @@ requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "open-quant-lab"
-version = "0.7.0"
-description = "A fully open research pipeline for trading strategies, built around tests that cannot be gamed"
+name = "permutalpha"
+dynamic = ["version"]
+description = "A trading-research pipeline where every result must beat the same search on shuffled markets: pre-registration, permutation gates, one-shot holdouts, a tamper-evident ledger, and an AI assistant that can explore but never test"
 readme = "README.md"
 license = {text = "MIT"}
 authors = [{name = "David DeConti"}]
 requires-python = ">=3.10"
 dependencies = ["numpy>=1.24", "pandas>=2.0", "pyarrow>=12", "certifi"]
+keywords = ["quantitative finance", "backtesting", "permutation test", "overfitting", "pre-registration",
+            "trading", "research", "mcp", "ai agents"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Financial and Insurance Industry",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Office/Business :: Financial :: Investment",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+
+[project.optional-dependencies]
+trees = ["scikit-learn>=1.2"]      # boosted-tree efficiency forecasts
+paper = ["ccxt>=4"]                # live bars for paper trading
+all = ["scikit-learn>=1.2", "ccxt>=4"]
+
+[project.urls]
+Homepage = "https://github.com/dnd8639-byte/permutalpha-quant"
+Source = "https://github.com/dnd8639-byte/permutalpha-quant/tree/main/lab"
+Documentation = "https://github.com/dnd8639-byte/permutalpha-quant/tree/main/lab/docs"
+Changelog = "https://github.com/dnd8639-byte/permutalpha-quant/blob/main/lab/CHANGELOG.md"
+"Live demo" = "https://dnd8639-byte.github.io/open-quant-lab/"
 
 [project.scripts]
 oql = "oql.cli:main"
+permutalpha = "oql.cli:main"
 
 [tool.setuptools]
 packages = ["oql", "oql.projects"]
+
+[tool.setuptools.dynamic]
+version = {attr = "oql.__version__"}
 
 [tool.setuptools.package-data]
 oql = ["web/*.html", "web/*.js"]
