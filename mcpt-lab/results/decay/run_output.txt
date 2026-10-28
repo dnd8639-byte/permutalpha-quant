@@ -1,0 +1,40 @@
+Data: Kenneth French Data Library, through 2026-07
+
+strategy                   paper                   IS %/mo     t     OOS    POST     t  POST/IS
+Size (SMB)                 Banz 1981                 0.157   1.2   1.223   0.015   0.1       9%  <- did not replicate in-sample; excluded
+Value (HML)                Fama-French 1992          0.425   3.0   0.682   0.181   1.1      43%
+Momentum (UMD)             Jegadeesh-Titman 1993     0.821   4.0   1.167   0.389   1.6      47%
+Short-term reversal        Jegadeesh 1990            0.963   8.4   0.358   0.139   0.8      14%
+Profitability (RMW)        Novy-Marx 2013            0.276   2.9   0.221   0.196   1.0      71%
+Small-firm January         Keim 1983                 0.341   3.2   0.145   0.034   0.8      10%
+Weekend / Monday           French 1980               0.934   9.4   0.617   0.225   1.9      24%
+Turn-of-the-month          Lakonishok-Smidt 1988     0.598   7.3   1.343   0.211   1.9      35%
+Halloween / Sell in May    Bouman-Jacobsen 2002      0.516   2.1   0.785   0.153   0.6      30%
+
+POOLED (8 strategies, 6889 strategy-months, SE clustered by 1200 months)
+  OOS  vs IS: +0.100  (se 0.377)  -> OOS returns are 110% of IS
+  POST vs IS: -0.699  (se 0.120)  -> POST returns are 30% of IS   one-sided p = 0.0000
+  H1 (b_POST < 0): PASS -- decay confirmed
+  H2 (POST below OOS, publication effect beyond statistical bias): diff -0.798 (se 0.375), p = 0.0167
+
+Robustness (reported, not gated):
+  drop_calendar    b_POST -0.615 (se 0.172), p = 0.0002; b_OOS +0.020
+  post_2y_earlier  b_POST -0.649 (se 0.119), p = 0.0000; b_OOS -0.144
+
+Is anything left after publication? Sign-flip test on POST months (10,000 draws):
+  Size (SMB)                 POST mean +0.015%/mo   p = 0.4574
+  Value (HML)                POST mean +0.181%/mo   p = 0.1326
+  Momentum (UMD)             POST mean +0.389%/mo   p = 0.0483
+  Short-term reversal        POST mean +0.139%/mo   p = 0.2101
+  Profitability (RMW)        POST mean +0.196%/mo   p = 0.1565
+  Small-firm January         POST mean +0.034%/mo   p = 0.2141
+  Weekend / Monday           POST mean +0.225%/mo   p = 0.0260
+  Turn-of-the-month          POST mean +0.211%/mo   p = 0.0307
+  Halloween / Sell in May    POST mean +0.153%/mo   p = 0.2753
+
+Faber 10-month moving-average timing (10 bps per switch) vs buy-and-hold:
+  IS   1973-01..2005-12  Sharpe 0.39 vs 0.36 (diff +0.03)   max DD -24% vs -45%   return diff -0.08%/mo   invested 73%
+  OOS  2006-01..2007-03  Sharpe 1.27 vs 1.27 (diff +0.00)   max DD -3% vs -3%   return diff +0.00%/mo   invested 100%
+  POST 2007-04..2026-07  Sharpe 0.74 vs 0.65 (diff +0.09)   max DD -18% vs -50%   return diff -0.20%/mo   invested 78%
+
+Tables in /Users/daviddeconti/Desktop/ahl-node/mcpt-lab/results/decay

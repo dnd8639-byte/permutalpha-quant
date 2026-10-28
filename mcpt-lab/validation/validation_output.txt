@@ -1,0 +1,4 @@
+V1 in-sample MCPT on noise (40 markets): 2% below 0.05, mean p 0.49  PASS
+V2 in-sample MCPT on planted trend (20): 100% below 0.05  PASS
+V3 walk-forward MCPT: noise 10% below 0.05 (mean p 0.36), trend 90%  PASS
+FRAMEWORK: VALIDATED

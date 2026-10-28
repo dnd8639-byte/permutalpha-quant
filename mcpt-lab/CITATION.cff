@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "mcpt-lab: Monte Carlo permutation tests for trading strategies"
+authors:
+  - given-names: David
+    family-names: DeConti
+repository-code: "https://github.com/dnd8639-byte/mcpt-lab"
+version: 1.0.0
+date-released: 2026-09-24
+license: MIT

@@ -1,0 +1,32 @@
+time,test,strategy,grid_size,market,start,end,bars,metric,real,p_value,n_perm,cost_bps,best_param,note
+2026-09-23 22:52,in_sample_mcpt,donchian,39,ES,2010-06-07,2018-12-31,2227,pf,1.1104,0.562,1000,2,125,example
+2026-09-23 23:00,walk_forward_mcpt,donchian,39,ES,2010-06-07,2026-09-22,4235,pf,0.9083,0.985,200,2,,train=1000 step=63 example
+2026-09-24 14:09,in_sample_mcpt,hawkes_vol,25,BTCUSDT_1h,2018-01-01,2020-12-31,26303,pf,1.1325,0.002,1000,5.0,"(0.1, 96)",neurotrader hawkes
+2026-09-24 14:20,walk_forward_mcpt,hawkes_vol,25,BTCUSDT_1h,2018-01-01,2022-12-31,43823,pf,1.0511,0.025,200,5.0,,train=26280 step=2160 neurotrader hawkes
+2026-09-24 17:03,postpub_fixed_mcpt,hawkes_vol,25,BTCUSDT_1h_binanceus,2023-01-01,2026-09-24,32691,pf,1.0314,0.026,1000,5.0,"(0.1, 96)","post-publication, params fixed from author's 2018-2022 data"
+2026-09-24 17:12,in_sample_signflip,hawkes_vol,25,BTCUSDT_1h,2018-01-01,2020-12-31,26303,pf,1.1325,0.002,1000,5.0,"(0.1, 96)",sign-flip null (vol clustering kept)
+2026-09-24 17:22,trendline_A1_insample_2018_2019,trendline_base,1,BTCUSDT_1h,2018-01-01,2019-12-31,17519,pf,0.9365,0.627,1000,5.0,lb72 fixed,fixed author params
+2026-09-24 17:25,trendline_A2_oos_2020_2022,trendline_base,1,BTCUSDT_1h,2020-01-01,2022-12-31,26304,pf,1.0123,0.119,1000,5.0,lb72 fixed,fixed author params
+2026-09-24 17:29,trendline_A3_postpub_2023_now,trendline_base,1,BTCUSDT_1h,2023-01-01,2026-09-24,32691,pf,1.0115,0.077,1000,5.0,lb72 fixed,fixed author params
+2026-09-24 17:42,trendline_B1B2_2020_2022_wfmcpt,trendline_meta,1,BTCUSDT_1h,2020-01-01,2022-12-31,26304,pf,1.0907,0.015,200,5.0,author,full pipeline permuted
+2026-09-24 17:53,trendline_B1B2_2020_2022_labelshuffle,trendline_meta,1,BTCUSDT_1h,2020-01-01,2022-12-31,26304,pf,1.0907,0.005,200,5.0,author,label-shuffle null
+2026-09-24 18:13,trendline_B3_postpub_2023_now_labelshuffle,trendline_meta,1,BTCUSDT_1h,2023-01-01,2026-09-24,32691,pf,1.0277,0.195,200,5.0,author,label-shuffle null
+2026-09-24 21:32,pooled_decay_regression,publication_decay,1,FF_US_equity,1926-07-01,2026-07-01,1201,b_post,-0.6986,0.0,0,0.0,b_oos=0.100,PREREG v6 H1 primary (trial 26); 8 strategies; SE clustered by month
+2026-09-24 21:32,post_pub_signflip,size,1,FF_US_equity,1981-04-01,2026-07-01,544,mean,0.0001,0.4574,10000,0.0,,PREREG v6 descriptive; Banz 1981; POST from 1981-04
+2026-09-24 21:32,post_pub_signflip,value,1,FF_US_equity,1992-07-01,2026-07-01,409,mean,0.0018,0.1326,10000,0.0,,PREREG v6 descriptive; Fama-French 1992; POST from 1992-07
+2026-09-24 21:32,post_pub_signflip,momentum,1,FF_US_equity,1993-04-01,2026-07-01,400,mean,0.0039,0.0483,10000,0.0,,PREREG v6 descriptive; Jegadeesh-Titman 1993; POST from 1993-04
+2026-09-24 21:32,post_pub_signflip,reversal,1,FF_US_equity,1990-08-01,2026-07-01,432,mean,0.0014,0.2101,10000,0.0,,PREREG v6 descriptive; Jegadeesh 1990; POST from 1990-08
+2026-09-24 21:32,post_pub_signflip,profitability,1,FF_US_equity,2013-05-01,2026-07-01,159,mean,0.002,0.1565,10000,0.0,,PREREG v6 descriptive; Novy-Marx 2013; POST from 2013-05
+2026-09-24 21:32,post_pub_signflip,january,1,FF_US_equity,1983-07-01,2026-07-01,517,mean,0.0003,0.2141,10000,0.0,,PREREG v6 descriptive; Keim 1983; POST from 1983-07
+2026-09-24 21:32,post_pub_signflip,monday,1,FF_US_equity,1980-04-01,2026-07-01,556,mean,0.0023,0.026,10000,0.0,,PREREG v6 descriptive; French 1980; POST from 1980-04
+2026-09-24 21:32,post_pub_signflip,tom,1,FF_US_equity,1989-01-01,2026-07-01,451,mean,0.0021,0.0307,10000,0.0,,PREREG v6 descriptive; Lakonishok-Smidt 1988; POST from 1989-01
+2026-09-24 21:32,post_pub_signflip,halloween,1,FF_US_equity,2003-01-01,2026-07-01,283,mean,0.0015,0.2753,10000,0.0,,PREREG v6 descriptive; Bouman-Jacobsen 2002; POST from 2003-01
+2026-09-24 21:43,post_pub_net_signflip,size,1,FF_US_equity,1981-04-01,2026-07-01,544,mean,-0.0003,0.5863,10000,NMV/era,,PREREG v7 descriptive; net of costs; POST from 1981-04
+2026-09-24 21:43,post_pub_net_signflip,value,1,FF_US_equity,1992-07-01,2026-07-01,409,mean,0.0013,0.2086,10000,NMV/era,,PREREG v7 descriptive; net of costs; POST from 1992-07
+2026-09-24 21:43,post_pub_net_signflip,momentum,1,FF_US_equity,1993-04-01,2026-07-01,400,mean,-0.0026,0.86,10000,NMV/era,,PREREG v7 descriptive; net of costs; POST from 1993-04
+2026-09-24 21:43,post_pub_net_signflip,reversal,1,FF_US_equity,1990-08-01,2026-07-01,432,mean,-0.0151,1.0,10000,NMV/era,,PREREG v7 descriptive; net of costs; POST from 1990-08
+2026-09-24 21:43,post_pub_net_signflip,profitability,1,FF_US_equity,2013-05-01,2026-07-01,159,mean,0.0017,0.1974,10000,NMV/era,,PREREG v7 descriptive; net of costs; POST from 2013-05
+2026-09-24 21:43,post_pub_net_signflip,january,1,FF_US_equity,1983-07-01,2026-07-01,517,mean,-0.0051,1.0,10000,NMV/era,,PREREG v7 descriptive; net of costs; POST from 1983-07
+2026-09-24 21:43,post_pub_net_signflip,monday,1,FF_US_equity,1980-04-01,2026-07-01,556,mean,-0.0021,0.959,10000,NMV/era,,PREREG v7 descriptive; net of costs; POST from 1980-04
+2026-09-24 21:43,post_pub_net_signflip,tom,1,FF_US_equity,1989-01-01,2026-07-01,451,mean,0.0015,0.0866,10000,NMV/era,,PREREG v7 descriptive; net of costs; POST from 1989-01
+2026-09-24 21:43,post_pub_net_signflip,halloween,1,FF_US_equity,2003-01-01,2026-07-01,283,mean,0.0015,0.2842,10000,NMV/era,,PREREG v7 descriptive; net of costs; POST from 2003-01
