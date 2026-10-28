@@ -1,0 +1,9 @@
+[Unit]
+Description=Run the order-book feature extractor 7 minutes past every hour
+
+[Timer]
+OnCalendar=*-*-* *:07:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

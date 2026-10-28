@@ -1,0 +1,12 @@
+# Turns the recorder's order-book files into data/hourly.csv. Started every hour by micro-extract.timer.
+# Install:  sudo cp micro-extract.service micro-extract.timer /etc/systemd/system/ && sudo systemctl daemon-reload && sudo systemctl enable --now micro-extract.timer
+# Check:    systemctl list-timers micro-extract.timer      Logs: journalctl -u micro-extract -n 20
+[Unit]
+Description=Order-book hourly features (read-only)
+
+[Service]
+Type=oneshot
+User=david
+WorkingDirectory=/home/david/micro
+ExecStart=/home/david/prod/.venv/bin/python extract.py
+Nice=10
