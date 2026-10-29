@@ -15,8 +15,7 @@ has largely faded since 2007.
 | [`infra/`](infra/) | Raspberry Pi services: the order-book recorder and the paper trader. |
 
 Licensed data (Databento futures, Yahoo option chains) is never in this repository; the code downloads or imports
-it locally. Much of the code was written with an AI assistant (Claude) to my design and direction; the research
-questions, pre-registrations, decisions and experiments are mine.
+it locally. 
 
 Results so far: `lab/docs/CALIBRATION.md` (how trustworthy the tests are), the lab's ledger of every test run, and
 the micro study's pre-registration.
