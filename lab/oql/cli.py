@@ -1,4 +1,4 @@
-"""oql: the Open Quant Lab command line.   Run `python -m oql --help`, or `oql --help` after `pip install -e .`
+"""oql: the Permutalpha command line.   Run `python -m oql --help`, or `oql --help` after `pip install -e .`
 
 DATA
   oql data list                                  every dataset, its licence, rows and dates
@@ -146,7 +146,7 @@ def _card(a):
 
 
 def main(argv=None):
-    p = argparse.ArgumentParser(prog="oql", description="Open Quant Lab", formatter_class=argparse.RawDescriptionHelpFormatter,
+    p = argparse.ArgumentParser(prog="oql", description="Permutalpha", formatter_class=argparse.RawDescriptionHelpFormatter,
                                 epilog=__doc__)
     sub = p.add_subparsers(dest="area", required=True)
 

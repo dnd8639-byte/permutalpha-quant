@@ -7,7 +7,7 @@ has largely faded since 2007.
 
 | Folder | What it is |
 |---|---|
-| [`lab/`](lab/) | **Open Quant Lab** (`pip install permutalpha`): the research pipeline. Pre-registration, frozen rules, whole-search permutation tests under three null models, one-shot holdouts with power analysis, a tamper-evident ledger, a data collector, paper trading, a live dashboard, and an AI assistant that can explore but never test. |
+| [`lab/`](lab/) | **Permutalpha** (`pip install permutalpha`): the research pipeline. Pre-registration, frozen rules, whole-search permutation tests under three null models, one-shot holdouts with power analysis, a tamper-evident ledger, a data collector, paper trading, a live dashboard, and an AI assistant that can explore but never test. |
 | [`micro-study/`](micro-study/) | A pre-registered study of BTC order-book features recorded by my Raspberry Pi; frozen 2026-10-20, confirmatory test pending. |
 | [`mcpt-lab/`](mcpt-lab/) | The first permutation-testing toolkit, before the lab. |
 | [`projects/`](projects/) | Ten quant mini-projects: tail risk, seasonality, overfitting, momentum crashes, factor neutrality, American options, autodiff Greeks, implied distributions, Hawkes processes, news diffusion. |

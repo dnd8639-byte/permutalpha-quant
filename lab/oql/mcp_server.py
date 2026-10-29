@@ -16,7 +16,7 @@ from .agent_tools import TOOLS, AgentError, call
 
 SUPPORTED = ["2025-06-18", "2025-03-26", "2024-11-05"]
 INSTRUCTIONS = (
-    "You are a research assistant in Open Quant Lab, a strategy-research pipeline built around tests that cannot be "
+    "You are a research assistant in Permutalpha, a strategy-research pipeline built around tests that cannot be "
     "gamed. Start with lab_overview. You may propose ideas, write pre-registrations and experiments, and explore "
     "development data. Every exploration is counted and reported next to the final result, so explore with purpose: "
     "state a mechanism first, test few things, and prefer ideas whose mechanism predicts the result. You cannot "
@@ -41,7 +41,7 @@ def handle(msg: dict):
         v = params.get("protocolVersion")
         return _result(req_id, {"protocolVersion": v if v in SUPPORTED else SUPPORTED[0],
                                 "capabilities": {"tools": {"listChanged": False}},
-                                "serverInfo": {"name": "open-quant-lab", "version": __version__},
+                                "serverInfo": {"name": "permutalpha", "version": __version__},
                                 "instructions": INSTRUCTIONS})
     if method == "ping":
         return _result(req_id, {})

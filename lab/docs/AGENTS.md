@@ -26,7 +26,7 @@ split of the card's experiment.
 
 **1. Give the assistant's copy of the lab a home outside Desktop, Documents and Downloads.** macOS protects those
 folders, and Claude Desktop starts MCP servers in a way macOS does not credit to Claude's own permissions, so a
-server kept there stops at once with "Operation not permitted" (see `~/Library/Logs/Claude/mcp-server-open-quant-lab.log`).
+server kept there stops at once with "Operation not permitted" (see `~/Library/Logs/Claude/mcp-server-permutalpha.log`).
 For example:
 
 ```bash
@@ -45,7 +45,7 @@ To update the assistant's copy, run `~/quant/.venv/bin/pip install -U permutalph
 ```json
 {
   "mcpServers": {
-    "open-quant-lab": {
+    "permutalpha": {
       "command": "/Users/YOU/quant/.venv/bin/oql",
       "args": ["mcp"],
       "env": {
@@ -58,7 +58,7 @@ To update the assistant's copy, run `~/quant/.venv/bin/pip install -U permutalph
 ```
 
 **3. Quit Claude completely and reopen it.** In a new chat, + then Connectors then Manage connectors should list
-`open-quant-lab` with 12 tools. Then try: *"Look at my lab. Propose one idea with a clear mechanism that the data could
+`permutalpha` with 12 tools. Then try: *"Look at my lab. Propose one idea with a clear mechanism that the data could
 test, set up the experiment, explore at most five strategies, and ask me for review."*
 
 When it asks for review, the card shows "AI asks for review" on the dashboard. Read its pre-registration, then

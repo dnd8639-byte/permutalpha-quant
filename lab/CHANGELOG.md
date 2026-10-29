@@ -3,6 +3,11 @@
 Changes that can alter what a test measures are marked **(affects results)**. A frozen card records the lab
 version it was frozen with, and its gate report shows both versions if they differ.
 
+## 0.9.2: one name
+- The project is now called **Permutalpha** everywhere (README, dashboard, CLI help, MCP instructions, Pi service
+  descriptions). The MCP server reports itself as `permutalpha`; an existing Claude config key named
+  `open-quant-lab` keeps working, since the key is only a local label. No change to any result.
+
 ## 0.9.1
 - Published on PyPI as **permutalpha** (`pip install permutalpha`; the import name and the `oql` command are
   unchanged, and `permutalpha` works as a command too). Extras: `[trees]`, `[paper]`, `[all]`.

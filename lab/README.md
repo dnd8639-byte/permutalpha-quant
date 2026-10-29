@@ -1,4 +1,4 @@
-# permutalpha (Open Quant Lab)
+# Permutalpha
 
 ```bash
 pip install permutalpha

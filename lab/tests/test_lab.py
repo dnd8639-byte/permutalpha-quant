@@ -395,7 +395,7 @@ class TestAgent(Base):
             call(8, "write_experiment", {"card_id": "1", "datasets": ["trend/m0/1d"], "n_perm": 5}),
             {"jsonrpc": "2.0", "id": 9, "method": "nonsense"},
         ])
-        self.assertEqual(r[0]["result"]["serverInfo"]["name"], "open-quant-lab")
+        self.assertEqual(r[0]["result"]["serverInfo"]["name"], "permutalpha")
         names = {t["name"] for t in r[1]["result"]["tools"]}
         self.assertIn("explore", names)
         self.assertFalse(names & {"freeze", "gate", "holdout", "paper_deploy"})          # never exposed

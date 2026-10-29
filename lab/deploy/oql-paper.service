@@ -2,7 +2,7 @@
 # Install only once a card is deployed (oql paper deploy ...):
 #   sudo cp oql-paper.service oql-paper.timer /etc/systemd/system/ && sudo systemctl daemon-reload && sudo systemctl enable --now oql-paper.timer
 [Unit]
-Description=Open Quant Lab paper trading step
+Description=Permutalpha paper trading step
 After=network-online.target
 Wants=network-online.target
 

@@ -263,7 +263,7 @@ def serve(port: int = 8765, open_browser: bool = True):
         raise
     srv.daemon_threads = True                                # open live streams never keep the server alive
     url = f"http://127.0.0.1:{port}/"
-    print(f"Open Quant Lab dashboard: {url}   (lab: {board.lab_dir()}; Control + C stops it)", flush=True)
+    print(f"Permutalpha dashboard: {url}   (lab: {board.lab_dir()}; Control + C stops it)", flush=True)
     if open_browser:
         threading.Timer(0.8, lambda: webbrowser.open(url)).start()
     try:

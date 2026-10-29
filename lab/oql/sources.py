@@ -24,7 +24,7 @@ import pandas as pd
 
 from . import catalog
 
-UA = {"User-Agent": "open-quant-lab/0.1 (research; contact via GitHub)"}
+UA = {"User-Agent": "permutalpha/0.9.2 (research; contact via GitHub)"}
 
 
 def _ssl_context():

@@ -1,4 +1,4 @@
-# Developing Open Quant Lab
+# Developing Permutalpha
 
 How the code fits together, the rules every change must keep, and step-by-step recipes for the changes you will
 make most often. Run the tests before and after every change: `python -m unittest discover tests` (about 30 s).

@@ -1,4 +1,4 @@
-// Live charts for Open Quant Lab: the Projects tab and the Live market tab.
+// Live charts for Permutalpha: the Projects tab and the Live market tab.
 // Every computation streams events (see oql/live.py); each chart event carries the whole chart, so the page simply
 // keeps the latest version of each chart and redraws it. Colors are the validated categorical palette in index.html.
 (() => {

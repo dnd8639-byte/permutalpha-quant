@@ -2,7 +2,7 @@
 # Install: sudo cp oql-collect.service oql-collect.timer /etc/systemd/system/ && sudo systemctl daemon-reload && sudo systemctl enable --now oql-collect.timer
 # Check:   systemctl list-timers oql-collect.timer      Logs: journalctl -u oql-collect -n 50
 [Unit]
-Description=Open Quant Lab data collector
+Description=Permutalpha data collector
 After=network-online.target
 Wants=network-online.target
 
